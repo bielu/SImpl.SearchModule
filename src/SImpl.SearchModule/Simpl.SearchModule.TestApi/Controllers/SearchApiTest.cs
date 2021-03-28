@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SImpl.CQRS.Queries;
+using SImpl.SearchModule.Abstraction.Results;
 using SImpl.SearchModule.FluentApi.Configuration;
 using SImpl.SearchModule.FluentApi.Configuration.Fluent.Extensions;
 
@@ -24,8 +26,7 @@ namespace Simpl.SearchModule.TestApi.Controllers
         [HttpGet]
         public async Task<IEnumerable<string>> Get()
         {
-            var query = new FluentApiSearchQueryCreator();
-            query.CreateSearchQuery(e=>
+            var query = new FluentApiSearchQueryCreator().CreateSearchQuery(e=>
             {
                 e.CreateBoolQuery(e => e.Must()
                         .CreateTermQuery(
@@ -39,7 +40,8 @@ namespace Simpl.SearchModule.TestApi.Controllers
                     .CreateBoolQuery(e => e.Should().CreateBoolQuery());
                 
             });
-            return await _queryDispatcher.QueryAsync(query);
+            var result = await _queryDispatcher.QueryAsync<IQueryResult>(query);
+            return ;
           
         }
     }

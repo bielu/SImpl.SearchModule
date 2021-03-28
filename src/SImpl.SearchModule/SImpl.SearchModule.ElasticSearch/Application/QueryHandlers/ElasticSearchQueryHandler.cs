@@ -1,46 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Nest;
 using SImpl.SearchModule.Abstraction.Models;
 using SImpl.SearchModule.Abstraction.Queries;
+using SImpl.SearchModule.Abstraction.Results;
+using SImpl.SearchModule.ElasticSearch.Application.Commands;
 
 namespace SImpl.SearchModule.ElasticSearch.Application.QueryHandlers
 {
     public class ElasticSearchQueryHandler : IElasticSearchQueryHandler
     {
-         private QueryContainer BuildQuery(ISearchQuery query)
-                 {
-                     var mustQueries = new List<QueryContainer>();
-                     var filterQueries = new List<QueryContainer>();
-                     var shouldQueries = new List<QueryContainer>();
+        private IElasticSearchQueryTranslatorService _translatorService;
+        private readonly IElasticClient _client;
 
-                     if (!string.IsNullOrEmpty(query.Culture))
-                     {
-                         mustQueries.Add(new TermQuery
-                         {
-                             Field = Infer.Field<ISearchModel>(f => f.Culture),
-                             Value = query.Culture.ToLower(),
-                         });
-                     }
+        public ElasticSearchQueryHandler(IElasticSearchQueryTranslatorService translatorService, IElasticClient client)
+        {
+            _translatorService = translatorService;
+            _client = client;
+        }
 
-                     foreach (var field in query.Where(x=>x.Key == Occurance.Must))
-                     {
-                         mustQueries.Add(new TermQuery
-                         {
-                             Field = Infer.Field<ISearchModel>(model => model.GetType().GetProperties().FirstOrDefault(e=>e.Name ==field.Value.Field) ),
-                             Value = field.Value.Query,
-                         });
-                     }
+        public async Task<IQueryResult> HandleAsync(ISearchQuery<IQueryResult> query)
+        {
+            QueryContainer elasticQuery = _translatorService.Translate(query);
 
-                     var finalQuery = new BoolQuery
-                     {
-                         Must = mustQueries,
-                         Should = shouldQueries,
-                         Filter = filterQueries,
-                         MinimumShouldMatch = shouldQueries.Any() ? 1 : 0,
-                     };
-         
-                     return finalQuery;
-                 }
+           var result=  _client.Search<IQueryResult>(s => s.Query(e => elasticQuery));
+           return result.Documents.FirstOrDefault();
+        }
     }
 }

@@ -4,4 +4,8 @@
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SImpl.CQRS.Queries" Version="1.0.5" />
+    </ItemGroup>
+
 </Project>
