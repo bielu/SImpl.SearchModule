@@ -22,10 +22,10 @@ namespace SImpl.SearchModule.ElasticSearch.Application.QueryHandlers
 
         public async Task<IQueryResult> HandleAsync(ISearchQuery<IQueryResult> query)
         {
-            QueryContainer elasticQuery = _translatorService.Translate(query);
+            SearchDescriptor<IQueryResult> searchDescriptor = _translatorService.Translate(query);
 
-           var result=  _client.Search<IQueryResult>(s => s.Query(e => elasticQuery));
-           return result.Documents.FirstOrDefault();
+            var result = _client.Search<IQueryResult>(s => searchDescriptor);
+            return result.Documents.FirstOrDefault();
         }
     }
 }

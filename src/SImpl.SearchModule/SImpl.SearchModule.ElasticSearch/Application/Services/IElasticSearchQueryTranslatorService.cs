@@ -7,6 +7,6 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Commands
 {
     public interface IElasticSearchQueryTranslatorService
     {
-        public QueryContainer Translate<T>(ISearchQuery<T> query);
+        public SearchDescriptor<T> Translate<T>(ISearchQuery<T> query) where T : class;
     }
 }

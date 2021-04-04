@@ -2,6 +2,6 @@
 {
     public interface IFacetField
     {
-        
+        public string FieldName { get; set; }
     }
 }
