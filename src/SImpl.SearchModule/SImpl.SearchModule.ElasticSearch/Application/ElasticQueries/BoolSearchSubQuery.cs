@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using SImpl.SearchModule.Abstraction.Queries;
 
-namespace SImpl.SearchModule.FluentApi.Queries
+namespace SImpl.SearchModule.ElasticSearch.Application.ElasticQueries
 {
     public class BoolSearchSubQuery : INestableQuery
     {
