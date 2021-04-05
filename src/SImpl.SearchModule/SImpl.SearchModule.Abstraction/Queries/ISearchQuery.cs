@@ -5,7 +5,7 @@ using SImpl.SearchModule.Abstraction.Fields;
 
 namespace SImpl.SearchModule.Abstraction.Queries
 {
-    public interface ISearchQuery<T> : IDictionary<Occurance, ISearchSubQuery>, ICreatableSearchQuery<Occurance, ISearchSubQuery>, IQuery<T>
+    public interface ISearchQuery<T> : IDictionary<Occurance, ISearchSubQuery>, ICreatableSearchQuery<Occurance, ISearchSubQuery>, IQuery<T>, ISearchQuery
     {
         public int Page { get; set; }
         public int PageSize { get; set; }
@@ -16,4 +16,8 @@ namespace SImpl.SearchModule.Abstraction.Queries
         void Add(Occurance queryOccurance, ISearchSubQuery booleanQueryQuery);
     }
 
+    public interface ISearchQuery
+    {
+        
+    }
 }

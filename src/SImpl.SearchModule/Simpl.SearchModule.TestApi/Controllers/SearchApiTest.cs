@@ -29,19 +29,19 @@ namespace Simpl.SearchModule.TestApi.Controllers
             var query = new FluentApiSearchQueryCreator().CreateSearchQuery(e=>
             {
                 e.CreateBoolQuery(e => e.Must()
-                        .CreateTermQuery(
-                            t=>t
-                                .Should()
-                                .WithField("Title")
-                                .WithValue("I am the best")
-                            )
+                    .CreateTermQuery(
+                        t => t
+                            .Should()
+                            .WithField("Title")
+                            .WithValue("I am the best")
                     )
-                    
-                    .CreateBoolQuery(e => e.Should().CreateBoolQuery());
-                
+                );
+
+                //    .CreateBoolQuery(e => e.Should().CreateBoolQuery());
+
             });
             var result = await _queryDispatcher.QueryAsync<IQueryResult>(query);
-            return ;
+            return new List<string>();
           
         }
     }

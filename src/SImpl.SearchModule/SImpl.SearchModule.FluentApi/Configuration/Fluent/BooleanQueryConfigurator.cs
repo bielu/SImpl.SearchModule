@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using SImpl.SearchModule.Abstraction.Queries;
-using SImpl.SearchModule.FluentApi.Queries;
+using SImpl.SearchModule.ElasticSearch.Application.ElasticQueries;
 
 namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
 {
