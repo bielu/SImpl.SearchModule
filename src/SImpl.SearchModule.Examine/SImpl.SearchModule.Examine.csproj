@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>SImpl.SearchModule.Examine</RootNamespace>
+        <AssemblyName>SImpl.SearchModule.Examine</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Examine" Version="2.0.0-beta.154" />
+      <PackageReference Include="Examine.Core" Version="2.0.0-beta.154" />
+      <PackageReference Include="Examine.Lucene" Version="2.0.0-beta.154" />
+      <PackageReference Include="Lucene.Net.Facet" Version="4.8.0-beta00014" />
+      <PackageReference Include="SImpl" Version="1.0.17" />
+      <PackageReference Include="SImpl.CQRS.Commands" Version="1.0.17" />
+      <PackageReference Include="SImpl.CQRS.Queries" Version="1.0.17" />
+      <PackageReference Include="SImpl.Hosts.WebHost" Version="1.0.17" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SImpl.SearchModule.Core\SImpl.SearchModule.Core.csproj" />
+    </ItemGroup>
+
+</Project>

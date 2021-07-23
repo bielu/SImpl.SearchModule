@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>SImpl.SearchModule.ElasticSearch</RootNamespace>
+        <AssemblyName>SImpl.SearchModule.ElasticSearch</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Elasticsearch.Net" Version="7.11.0" />
+      <PackageReference Include="NEST" Version="7.11.0" />
+      <PackageReference Include="SImpl.CQRS.Commands" Version="1.0.17" />
+      <PackageReference Include="SImpl.Hosts.WebHost" Version="1.0.17" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SImpl.SearchModule.Abstraction\SImpl.SearchModule.Abstraction.csproj" />
+      <ProjectReference Include="..\SImpl.SearchModule.Core\SImpl.SearchModule.Core.csproj" />
+    </ItemGroup>
+
+</Project>
