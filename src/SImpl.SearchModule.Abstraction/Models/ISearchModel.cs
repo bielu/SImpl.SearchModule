@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using SImpl.Common;
 
 namespace SImpl.SearchModule.Abstraction.Models
 {
-    public interface ISearchModel
+    public interface ISearchModel : IEntity<string>
     {
         DateTime? IndexedAt { get; set; }
         CultureInfo Culture { get; set; }

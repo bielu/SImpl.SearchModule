@@ -1,8 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Nest;
 using SImpl.CQRS.Commands;
 using SImpl.SearchModule.Abstraction.Commands;
 using SImpl.SearchModule.Abstraction.Models;
+using SImpl.SearchModule.ElasticSearch.Configuration;
+using SImpl.SearchModule.ElasticSearch.Models;
 
 namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
 {
@@ -17,9 +21,19 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
 
         public async Task HandleAsync(IndexCommand command)
         {
-            await _client.BulkAsync(x => x.IndexMany<ISearchModel>(command.Models, (bulkDes, record) => bulkDes
-                .Index(command.Index)
+            var  index =await _client.Indices.ExistsAsync(command.Index.ToLowerInvariant());
+            if (!index.Exists)
+            {
+                var answer = await _client.Indices.CreateAsync(command.Index.ToLowerInvariant(), index=>index.Map(f=>f.AutoMap<ElasticSearchModel>()));
+            }
+           var answerIndex= await _client.BulkAsync(x => x.IndexMany<ElasticSearchModel>(command.Models.Select(ElasticSearchModelMapper.Map)
+                .ToList(), (bulkDes, record) => bulkDes
+                .Index(command.Index.ToLowerInvariant())
                 .Document(record)));
+            if (answerIndex.Errors)
+            {
+                throw new Exception(answerIndex.DebugInformation);
+            }
         }
     }
 }

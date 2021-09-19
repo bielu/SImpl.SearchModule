@@ -79,7 +79,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
 
             translated = translated.Size(query.PageSize);
             translated = translated.Skip(query.Page * query.PageSize);
-            translated = translated.Index(query.Index);
+            translated = translated.Index(query.Index.ToLowerInvariant());
             return translated;
         }
     }

@@ -9,6 +9,7 @@
     <ItemGroup>
       <PackageReference Include="Elasticsearch.Net" Version="7.11.0" />
       <PackageReference Include="NEST" Version="7.11.0" />
+      <PackageReference Include="NEST.JsonNetSerializer" Version="7.11.0" />
       <PackageReference Include="SImpl.CQRS.Commands" Version="1.0.17" />
       <PackageReference Include="SImpl.Hosts.WebHost" Version="1.0.17" />
     </ItemGroup>

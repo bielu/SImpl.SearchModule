@@ -21,7 +21,7 @@ namespace SImpl.SearchModule.Examine.Application.CommandHandlers
 
         public async Task HandleAsync(IndexCommand command)
         {
-            _examineManager.TryGetIndex(command.Index, out IIndex index);
+            _examineManager.TryGetIndex(command.Index.ToLowerInvariant(), out IIndex index);
             if (!index.IndexExists())
             {
                 index.CreateIndex();

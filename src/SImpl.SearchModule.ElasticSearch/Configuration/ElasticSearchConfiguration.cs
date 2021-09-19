@@ -1,5 +1,6 @@
 ﻿using System;
 using Elasticsearch.Net;
+using Nest;
 
 namespace SImpl.SearchModule.ElasticSearch.Configuration
 {
@@ -11,6 +12,8 @@ namespace SImpl.SearchModule.ElasticSearch.Configuration
         
         public ApiKeyAuthenticationCredentials ApiAuthentication { get; set; }
         public BasicAuthenticationCredentials ConnectionSettingValues { get; set; }
+        public bool UseDebugStream { get; set; } = false;
         public Uri Uri { get; set; }
+        public string IndexName { get; set; } = "Headless_Search";
     }
 }
