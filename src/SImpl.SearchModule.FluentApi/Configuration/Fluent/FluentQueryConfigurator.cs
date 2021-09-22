@@ -1,5 +1,6 @@
 ﻿using System;
 using SImpl.SearchModule.Abstraction.Queries;
+using SImpl.SearchModule.Abstraction.Queries.subqueries;
 
 namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
 {
@@ -7,6 +8,7 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
     {
         public FluentQueryConfigurator()
         {
+            Query = new BoolSearchSubQuery();
         }
 
         public INestableQuery Query { get; set; }
