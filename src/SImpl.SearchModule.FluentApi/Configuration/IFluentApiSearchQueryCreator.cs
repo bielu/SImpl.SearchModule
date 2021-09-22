@@ -7,6 +7,6 @@ namespace SImpl.SearchModule.FluentApi.Configuration
 {
     public interface IFluentApiSearchQueryCreator
     {
-        ISearchQuery<IQueryResult> CreateSearchQuery(Action<FluentQueryConfigurator> configurator);
+        ISearchQuery<IQueryResult> CreateSearchQuery(Action<IBaseQueryConfigurator> configurator);
     }
 }
