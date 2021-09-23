@@ -26,7 +26,8 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
             {
                 var answer = await _client.Indices.CreateAsync(command.Index.ToLowerInvariant(), index=>index.Map(f=>f.AutoMap<ElasticSearchModel>()));
             }
-           var answerIndex= await _client.BulkAsync(x => x.IndexMany<ElasticSearchModel>(command.Models.Select(ElasticSearchModelMapper.Map)
+           var answerIndex= await _client.BulkAsync(x => 
+               x.IndexMany<ElasticSearchModel>(command.Models.Select(ElasticSearchModelMapper.Map)
                 .ToList(), (bulkDes, record) => bulkDes
                 .Index(command.Index.ToLowerInvariant())
                 .Document(record)));

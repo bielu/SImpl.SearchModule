@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Nest;
+using SImpl.CQRS.Queries;
+using SImpl.SearchModule.Abstraction.Handlers;
 using SImpl.SearchModule.Abstraction.Models;
 using SImpl.SearchModule.Abstraction.Queries;
 using SImpl.SearchModule.Abstraction.Results;
@@ -10,7 +12,7 @@ using SImpl.SearchModule.ElasticSearch.Models;
 
 namespace SImpl.SearchModule.ElasticSearch.Application.QueryHandlers
 {
-    public class ElasticSearchQueryHandler : IElasticSearchQueryHandler
+    public class ElasticSearchQueryHandler : IQuery<ISearchQuery<IQueryResult>>
     {
         private IElasticSearchQueryTranslatorService _translatorService;
         private readonly IElasticClient _client;
