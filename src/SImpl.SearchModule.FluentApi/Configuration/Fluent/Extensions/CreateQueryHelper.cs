@@ -1,4 +1,5 @@
 ﻿using System;
+using SImpl.SearchModule.Abstraction.Queries;
 
 namespace SImpl.SearchModule.FluentApi.Configuration.Fluent.Extensions
 {
