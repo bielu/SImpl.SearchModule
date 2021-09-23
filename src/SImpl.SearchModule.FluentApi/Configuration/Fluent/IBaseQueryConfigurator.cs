@@ -3,7 +3,7 @@ using SImpl.SearchModule.Abstraction.Results;
 
 namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
 {
-    public class IBaseQueryConfigurator
+    public interface IBaseQueryConfigurator
     {
         public ISearchQuery<IQueryResult> Query { get; set; }
     }

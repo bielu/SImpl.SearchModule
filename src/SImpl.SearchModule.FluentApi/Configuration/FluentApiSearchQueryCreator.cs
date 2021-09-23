@@ -20,7 +20,5 @@ namespace SImpl.SearchModule.FluentApi.Configuration
             configurator.Invoke(newQuery);
             return (ISearchQuery<IQueryResult>)newQuery.Query;
         }
-
-        
     }
 }
