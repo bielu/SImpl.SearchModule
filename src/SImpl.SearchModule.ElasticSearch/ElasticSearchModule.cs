@@ -47,6 +47,7 @@ namespace SImpl.SearchModule.ElasticSearch
                     .AddClasses(c => c.AssignableTo(typeof(ISubQueryElasticTranslator<>)))
                     .AsImplementedInterfaces()
                     .WithTransientLifetime());
+            
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

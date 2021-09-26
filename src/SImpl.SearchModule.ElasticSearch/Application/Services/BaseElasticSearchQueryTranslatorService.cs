@@ -44,10 +44,9 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                 {
                     var type = field.Value.GetType();
                     var handlerType =
-                        typeof(ISubQueryElasticTranslator<>).MakeGenericType(typeof(ISubQueryElasticTranslator<>),
-                            type);
+                        typeof(ISubQueryElasticTranslator<>).MakeGenericType(type);
                     var translator =
-                        _collection.FirstOrDefault(x => x.GetType().GetGenericTypeDefinition() == handlerType);
+                        _collection.FirstOrDefault(x => x.GetType().GetInterfaces().Any(x=>x == handlerType));
                     if (translator == null)
                     {
                         continue;

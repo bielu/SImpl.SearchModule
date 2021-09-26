@@ -24,9 +24,9 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries
             foreach (var subQuery in boolQuery.NestedQueries)
             {
                 var type = subQuery.GetType();
-                var handlerType = typeof(ISubQueryElasticTranslator<>).MakeGenericType(typeof(ISubQueryElasticTranslator<>), type);
+                var handlerType = typeof(ISubQueryElasticTranslator<>).MakeGenericType(type);
                 var translator =
-                    collection.FirstOrDefault(x => x.GetType().GetGenericTypeDefinition() == handlerType);
+                    collection.FirstOrDefault(x => x.GetType().GetInterfaces().Any(x => x == handlerType));
                 if (translator == null)
                 {
                     continue;

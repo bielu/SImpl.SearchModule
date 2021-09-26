@@ -12,7 +12,7 @@ using SImpl.SearchModule.ElasticSearch.Models;
 
 namespace SImpl.SearchModule.ElasticSearch.Application.QueryHandlers
 {
-    public class ElasticSearchQueryHandler : IQuery<ISearchQuery<IQueryResult>>
+    public class ElasticSearchQueryHandler : IQueryHandler<SearchQuery,IQueryResult>
     {
         private IElasticSearchQueryTranslatorService _translatorService;
         private readonly IElasticClient _client;
@@ -23,7 +23,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.QueryHandlers
             _client = client;
         }
 
-        public async Task<IQueryResult> HandleAsync(ISearchQuery<IQueryResult> query)
+        public async Task<IQueryResult> HandleAsync(SearchQuery query)
         {
             SearchDescriptor<ISearchModel> searchDescriptor = _translatorService.Translate(query);
             var  index =await _client.Indices.ExistsAsync(query.Index.ToLowerInvariant());

@@ -19,9 +19,10 @@ namespace Simpl.SearchModule.TestApi.Controllers
         private readonly ILogger<SearchApiTestController> _logger;
 
         private readonly IQueryDispatcher _queryDispatcher;
-        public  SearchApiTestController(ILogger<SearchApiTestController> logger)
+        public  SearchApiTestController(ILogger<SearchApiTestController> logger, IQueryDispatcher queryDispatcher)
         {
             _logger = logger;
+            _queryDispatcher = queryDispatcher;
         }
         
         [HttpGet]
