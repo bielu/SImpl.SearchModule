@@ -24,7 +24,12 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
             var  index =await _client.Indices.ExistsAsync(command.Index.ToLowerInvariant());
             if (!index.Exists)
             {
-                var answer = await _client.Indices.CreateAsync(command.Index.ToLowerInvariant(), index=>index.Map(f=>f.AutoMap<ElasticSearchModel>()));
+                var answer = await _client.Indices.CreateAsync(command.Index.ToLowerInvariant(), index=>index.Map(f=>f.AutoMap<ElasticSearchModel>().Properties<ElasticSearchModel>(ps => ps
+                    .Keyword(s => s
+                        .Name(n => n.ContentType)
+                    ).Keyword(s => s
+                        .Name(n => n.Tags)
+                    ))));
             }
            var answerIndex= await _client.BulkAsync(x => 
                x.IndexMany<ElasticSearchModel>(command.Models.Select(ElasticSearchModelMapper.Map)

@@ -1,8 +1,8 @@
 ﻿namespace SImpl.SearchModule.Abstraction.Fields
 {
-    public interface IFacetField
+    public class SortOrderField : ISortOrderField
     {
         public string FieldName { get; set; }
-        public string FacetGroupName { get; set; }
+        public bool Desc { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace SImpl.SearchModule.Abstraction.Models
         IList<string> Tags { get; set; }
         string ContentType { get; set; }
         Type ViewModelType { get; set; }
-        IDictionary<string, List<object>> CustomProperties { get; set; }
+        IDictionary<string, List<object>> CustomProperties { get; set; } 
 
     }
 }

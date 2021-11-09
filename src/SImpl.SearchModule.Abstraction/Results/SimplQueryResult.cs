@@ -8,5 +8,13 @@ namespace SImpl.SearchModule.Abstraction.Results
         public List<ISearchModel> SearchModels { get; set; }
         public long Total { get; set; }
         public int Page { get; set; }
+        public List<BaseFacet> Facets { get; set; }
+        public IList<Filter> Filters { get; set; }
+        public bool IsSuccess { get; set; } = false;
+        public string ErrorMessage { get; set; }
+        public string Culture { get; set; }     
+        public string Term { get; set; }
+        public Pagination Pagination { get; set; }
+        public List<Sort> Sorts { get; set; }
     }
 }

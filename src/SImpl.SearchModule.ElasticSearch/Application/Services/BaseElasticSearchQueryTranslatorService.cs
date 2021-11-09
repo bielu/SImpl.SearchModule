@@ -24,9 +24,10 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
             if (query.FacetFields.Any())
             {
                 var facets = new AggregationContainerDescriptor<ISearchModel>();
+             
                 foreach (var facetField in query.FacetFields)
                 {
-                    facets = facets.Terms("facets", t => t.Field(facetField.FieldName));
+                     facets.Terms(facetField.FacetGroupName, t => t.Field(facetField.FieldName));
                 }
 
                 translated = translated.Aggregations(f => facets);
@@ -77,7 +78,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
             }
 
             translated = translated.Size(query.PageSize);
-            translated = translated.Skip(query.Page * query.PageSize);
+            translated = translated.Skip((query.Page-1) * query.PageSize);
             translated = translated.Index(query.Index.ToLowerInvariant());
             return translated;
         }

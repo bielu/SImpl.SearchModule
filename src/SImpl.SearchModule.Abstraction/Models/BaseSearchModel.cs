@@ -10,10 +10,12 @@ namespace SImpl.SearchModule.Abstraction.Models
         public CultureInfo Culture { get; set; }
         public string ContentKey { get; set; }
         public string Content { get; set; }
-        public IList<string> Tags { get; set; }
+        public IList<string> Tags { get; set; } = new List<string>();
         public string ContentType { get; set; }
         public Type ViewModelType { get; set; }
-        public IDictionary<string, List<object>> CustomProperties { get; set; }
+
+        public IDictionary<string, List<object>> CustomProperties { get; set; } =
+            new Dictionary<string, List<object>>();
 
         public string Id
         {

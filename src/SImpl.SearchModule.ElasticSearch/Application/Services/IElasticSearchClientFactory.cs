@@ -1,5 +1,6 @@
 using System;
 using Elasticsearch.Net;
+using Microsoft.Extensions.Configuration;
 using Nest;
 using Nest.JsonNetSerializer;
 using Newtonsoft.Json;
@@ -15,13 +16,16 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
     public class ElasticSearchClientFactory : IElasticSearchClientFactory
     {
         private ElasticSearchConfiguration _configuration;
+        private readonly IConfiguration _appSettings;
+
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings()
         {
             TypeNameHandling = TypeNameHandling.All,
         };
-        public ElasticSearchClientFactory(ElasticSearchConfiguration configuration)
+        public ElasticSearchClientFactory(ElasticSearchConfiguration configuration, IConfiguration appSettings)
         {
             _configuration = configuration;
+            _appSettings = appSettings;
         }
 
         public IElasticClient CreateClient()
@@ -33,10 +37,10 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                 default:
                 case AuthenticationModes.Default:
                     pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
-                    connectionString = new ConnectionSettings(pool, (builtin, settings) =>new NewtonsoftSerializer(JsonSerializerSettings));
+                    connectionString = new ConnectionSettings(pool);
                     if (_configuration.UseDebugStream)
                     {
-                        connectionString.DisableDirectStreaming();
+                        connectionString.EnableDebugMode();
                     }
 
                     return new ElasticClient(connectionString);
@@ -44,23 +48,28 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                 case AuthenticationModes.Uri: 
                     pool = new SingleNodeConnectionPool(_configuration.Uri);
 
-                    connectionString = new ConnectionSettings(pool, (builtin, settings) =>new NewtonsoftSerializer(JsonSerializerSettings));
+                    connectionString = new ConnectionSettings(pool);
 
                     if (_configuration.UseDebugStream)
                     {
-                        connectionString.DisableDirectStreaming();
+                        connectionString.EnableDebugMode();
                     }
 
                     return new ElasticClient(connectionString);
                     break;
                 case AuthenticationModes.CloudAuthentication:
+                    if (string.IsNullOrEmpty(_configuration.CloudId))
+                    {
+                        _configuration.CloudId = _appSettings["Simpl:SearchModule:Elastic:cloudId"];
+                        _configuration.BasicAuthentication = new BasicAuthenticationCredentials(_appSettings["simpl:searchModule:elastic:userName"],_appSettings["simpl:searchModule:elastic:password"]);
+                    }
                     pool = new CloudConnectionPool(_configuration.CloudId, _configuration.BasicAuthentication);
                     connectionString =
-                        new ConnectionSettings(pool, (builtin, settings) =>new NewtonsoftSerializer(JsonSerializerSettings));
+                        new ConnectionSettings(pool);
                     
                     if (_configuration.UseDebugStream)
                     {
-                        connectionString.DisableDirectStreaming();
+                        connectionString.EnableDebugMode();
                     }
                     return new ElasticClient(connectionString);
                     break;
@@ -68,11 +77,11 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                     pool = new CloudConnectionPool(_configuration.CloudId, _configuration.ApiAuthentication);
 
                     connectionString =
-                        new ConnectionSettings(pool, (builtin, settings) =>new NewtonsoftSerializer(JsonSerializerSettings));
+                        new ConnectionSettings(pool);
 
                     if (_configuration.UseDebugStream)
                     {
-                        connectionString.DisableDirectStreaming();
+                        connectionString.EnableDebugMode();
                     }
 
                     return new ElasticClient(connectionString);
@@ -81,11 +90,11 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                     pool = new CloudConnectionPool(_configuration.CloudId, _configuration.BasicAuthentication);
 
                     connectionString =
-                        new ConnectionSettings(pool,(builtin, settings) =>new NewtonsoftSerializer(JsonSerializerSettings));
+                        new ConnectionSettings(pool);
 
                     if (_configuration.UseDebugStream)
                     {
-                        connectionString.DisableDirectStreaming();
+                        connectionString.EnableDebugMode();
                     }
 
                     return new ElasticClient(connectionString);

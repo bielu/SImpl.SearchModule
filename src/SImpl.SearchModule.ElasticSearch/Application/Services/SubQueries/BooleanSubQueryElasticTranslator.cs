@@ -49,9 +49,9 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries
                 }
             }
             booleanQueryContainer.Filter(filterQueries.ToArray());
-            booleanQueryContainer.MustNot(shouldQueries.ToArray());
+            booleanQueryContainer.Should(shouldQueries.ToArray());
             booleanQueryContainer.Must(mustQueries.ToArray());
-            booleanQueryContainer.Should(mustNotQueries.ToArray());
+            booleanQueryContainer.MustNot(mustNotQueries.ToArray());
             queryContainer.Bool(b => booleanQueryContainer);
             return queryContainer;
         }

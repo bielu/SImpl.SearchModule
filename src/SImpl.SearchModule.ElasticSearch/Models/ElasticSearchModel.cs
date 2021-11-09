@@ -8,11 +8,11 @@ namespace SImpl.SearchModule.ElasticSearch.Models
     {
         public string Id { get; set; }
         public DateTime? IndexedAt { get; set; }
-        public string Culture { get; set; }
+        public string Culture { get; set; } 
         public string Content { get; set; }
-        public IEnumerable<string> Tags { get; set; }
+        public IEnumerable<string> Tags { get; set; } = new List<string>();
         public string ContentType { get; set; }
         public string ViewModelType { get; set; }
-        public IDictionary<string, List<object>> CustomProperties { get; set; }
+        public IDictionary<string, List<object>> CustomProperties { get; set; } = new Dictionary<string, List<object>>();
     }
 }

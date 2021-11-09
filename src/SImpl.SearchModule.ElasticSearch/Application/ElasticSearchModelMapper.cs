@@ -37,7 +37,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application
                 ContentType = model.ContentType,
                 Culture = new CultureInfo(model.Culture),
                 IndexedAt = model.IndexedAt,
-                Tags = model.Tags.ToList(),
+                Tags = model.Tags?.ToList(),
                 ViewModelType = Type.GetType(model.ViewModelType),
                 CustomProperties = model.CustomProperties,
             };
