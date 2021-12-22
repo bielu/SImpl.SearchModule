@@ -1,6 +1,7 @@
 using System;
 using Elasticsearch.Net;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Nest;
 using Nest.JsonNetSerializer;
 using Newtonsoft.Json;
@@ -17,15 +18,17 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
     {
         private ElasticSearchConfiguration _configuration;
         private readonly IConfiguration _appSettings;
+        private readonly ILogger<ElasticSearchClientFactory> _logger;
 
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings()
         {
             TypeNameHandling = TypeNameHandling.All,
         };
-        public ElasticSearchClientFactory(ElasticSearchConfiguration configuration, IConfiguration appSettings)
+        public ElasticSearchClientFactory(ElasticSearchConfiguration configuration, IConfiguration appSettings, ILogger<ElasticSearchClientFactory> logger)
         {
             _configuration = configuration;
             _appSettings = appSettings;
+            _logger = logger;
         }
 
         public IElasticClient CreateClient()
@@ -61,7 +64,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                     if (string.IsNullOrEmpty(_configuration.CloudId))
                     {
                         _configuration.CloudId = _appSettings["Simpl:SearchModule:Elastic:cloudId"];
-                        _configuration.BasicAuthentication = new BasicAuthenticationCredentials(_appSettings["simpl:searchModule:elastic:userName"],_appSettings["simpl:searchModule:elastic:password"]);
+                        _configuration.BasicAuthentication = new BasicAuthenticationCredentials(_appSettings["Simpl:SearchModule:Elastic:userName"],_appSettings["Simpl:SearchModule:Elastic:password"]);
                     }
                     pool = new CloudConnectionPool(_configuration.CloudId, _configuration.BasicAuthentication);
                     connectionString =

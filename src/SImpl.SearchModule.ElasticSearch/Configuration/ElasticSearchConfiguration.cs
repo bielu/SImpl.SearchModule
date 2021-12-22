@@ -14,6 +14,7 @@ namespace SImpl.SearchModule.ElasticSearch.Configuration
         public BasicAuthenticationCredentials ConnectionSettingValues { get; set; }
         public bool UseDebugStream { get; set; } = false;
         public Uri Uri { get; set; }
-        public string IndexName { get; set; } = "Headless_Search";
+        public string IndexPrefixName { get; set; } = "";
+        
     }
 }

@@ -9,7 +9,7 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
         
             public PrefixQueryConfigurator()
             {
-                _query = new TermSubQuery();
+                _query = new PrefixSubQuery();
             }
 
             public PrefixQueryConfigurator Must()
@@ -45,7 +45,7 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
                 return this;
             }
 
-            private TermSubQuery _query;
+            private PrefixSubQuery _query;
             public ISearchSubQuery Query => _query;
     }
 }

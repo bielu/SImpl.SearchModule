@@ -11,7 +11,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries
         {
             var castedQuery = (PrefixSubQuery)query;
             var queryResult = new QueryContainerDescriptor<TViewModel>();
-            queryResult.Prefix(x => x.Field(new Field(castedQuery.Field)).Value(castedQuery.Value));
+            queryResult.Prefix(x => x.Field(new Field(castedQuery.Field)).Value(castedQuery.Value).Boost(castedQuery.BoostValue));
             return queryResult;
         }
 

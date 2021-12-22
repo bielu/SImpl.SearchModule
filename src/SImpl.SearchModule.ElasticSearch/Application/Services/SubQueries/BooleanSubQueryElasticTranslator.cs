@@ -52,6 +52,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries
             booleanQueryContainer.Should(shouldQueries.ToArray());
             booleanQueryContainer.Must(mustQueries.ToArray());
             booleanQueryContainer.MustNot(mustNotQueries.ToArray());
+            booleanQueryContainer.Boost(boolQuery.BoostValue);
             queryContainer.Bool(b => booleanQueryContainer);
             return queryContainer;
         }

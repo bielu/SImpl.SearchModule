@@ -13,7 +13,13 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent.Extensions
             configurator.Query.Add(booleanQuery.Query.Occurance, booleanQuery.Query);
             return configurator;
         }
-
+        public static IQueryConfigurator CreateFuzzyQuery(this IQueryConfigurator configurator, Action<FuzzyQueryConfigurator> query)
+        {
+            var booleanQuery = new FuzzyQueryConfigurator();
+            query.Invoke(booleanQuery);
+            configurator.Query.Add(booleanQuery.Query.Occurance, booleanQuery.Query);
+            return configurator;
+        }
         public static IQueryConfigurator CreatePrefixQuery(this IQueryConfigurator configurator, Action<PrefixQueryConfigurator> query)
         {
             var booleanQuery = new PrefixQueryConfigurator();
@@ -21,7 +27,36 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent.Extensions
             configurator.Query.Add(booleanQuery.Query.Occurance, booleanQuery.Query);
             return configurator;
         }
-
+        public static IQueryConfigurator CreateNumericRangeQuery(this IQueryConfigurator configurator,
+            Action<NumericRangeQueryConfigurator> query)
+        {
+            var booleanQuery = new NumericRangeQueryConfigurator();
+            query.Invoke(booleanQuery);
+            configurator.Query.Add(booleanQuery.Query.Occurance, booleanQuery.Query);
+            return configurator;
+        }
+        public static IQueryConfigurator CreateLongRangeQuery(this IQueryConfigurator configurator,
+            Action<LongRangeQueryConfigurator> query)
+        {
+            var booleanQuery = new LongRangeQueryConfigurator();
+            query.Invoke(booleanQuery);
+            configurator.Query.Add(booleanQuery.Query.Occurance, booleanQuery.Query);
+            return configurator;
+        }  public static IQueryConfigurator CreateStringRangeQuery(this IQueryConfigurator configurator,
+            Action<StringRangeQueryConfigurator> query)
+        {
+            var booleanQuery = new StringRangeQueryConfigurator();
+            query.Invoke(booleanQuery);
+            configurator.Query.Add(booleanQuery.Query.Occurance, booleanQuery.Query);
+            return configurator;
+        }  public static IQueryConfigurator CreateDateRangeQuery(this IQueryConfigurator configurator,
+            Action<DateRangeQueryConfigurator> query)
+        {
+            var booleanQuery = new DateRangeQueryConfigurator();
+            query.Invoke(booleanQuery);
+            configurator.Query.Add(booleanQuery.Query.Occurance, booleanQuery.Query);
+            return configurator;
+        }
         public static IQueryConfigurator CreateBoolQuery(this IQueryConfigurator configurator,
             Action<BooleanQueryConfigurator> query)
         {
