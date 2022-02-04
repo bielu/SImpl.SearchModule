@@ -14,23 +14,23 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
 
             public TermQueryConfigurator Must()
             {
-                Query.Occurance = Occurance.Must;
+               Occurance = Occurance.Must;
                 return this;
             }
             public TermQueryConfigurator MustNot()
             {
-                Query.Occurance = Occurance.MustNot;
+                Occurance = Occurance.MustNot;
                 return this;
             }
             public TermQueryConfigurator Should()
             {
-                Query.Occurance = Occurance.Should;
+                Occurance = Occurance.Should;
                 return this;
             }
 
             public TermQueryConfigurator Filter()
             {
-                Query.Occurance = Occurance.Filter;
+               Occurance = Occurance.Filter;
                 return this;
             }
 
@@ -47,5 +47,6 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
 
             private TermSubQuery _query;
             public ISearchSubQuery Query => _query;
+            public Occurance Occurance { get; set; }
     }
 }

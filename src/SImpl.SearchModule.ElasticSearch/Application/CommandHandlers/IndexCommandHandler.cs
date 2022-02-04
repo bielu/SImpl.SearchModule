@@ -27,6 +27,8 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
                 var answer = await _client.Indices.CreateAsync(command.Index.ToLowerInvariant(), index=>index.Map(f=>f.AutoMap<ElasticSearchModel>().Properties<ElasticSearchModel>(ps => ps
                     .Keyword(s => s
                         .Name(n => n.ContentType)
+                    ) .Keyword(s => s
+                        .Name(n => n.Facet)
                     ).Keyword(s => s
                         .Name(n => n.Tags)
                     ))));

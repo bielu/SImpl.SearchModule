@@ -10,12 +10,12 @@ using SImpl.SearchModule.Examine.Application.Services;
 
 namespace SImpl.SearchModule.Examine.Application.QueryHandlers
 {
-    public class ElasticSearchQueryHandler : IElasticSearchQueryHandler
+    public class ExamineSearchQueryHandler : IElasticSearchQueryHandler
     {
         private readonly IExamineQueryTranslatorService _translatorService;
         private readonly IExamineManager _examineManager;
 
-        public ElasticSearchQueryHandler(IExamineQueryTranslatorService translatorService, IExamineManager examineManager)
+        public ExamineSearchQueryHandler(IExamineQueryTranslatorService translatorService, IExamineManager examineManager)
         {
             _translatorService = translatorService;
             _examineManager = examineManager;
@@ -31,8 +31,7 @@ namespace SImpl.SearchModule.Examine.Application.QueryHandlers
             {
                 //defaultOption but can be override in custom handlers
                 SearchModels = result.Select(x=>JsonConvert.DeserializeObject<ISearchModel>(x.Values["ViewModel"])).ToList(),
-                Total = result.TotalItemCount,
-                Page = query.Page
+              
             };
             return resultModel;
         }

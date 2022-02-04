@@ -6,7 +6,6 @@ namespace SImpl.SearchModule.Abstraction.Results
     public interface IQueryResult
     {
         List<ISearchModel> SearchModels { get; set; }
-        long Total { get; set; }
-        int Page { get; set; }
+        Pagination Pagination { get; set; }
     }
 }

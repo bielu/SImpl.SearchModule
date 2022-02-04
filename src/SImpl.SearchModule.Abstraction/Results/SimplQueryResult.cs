@@ -6,8 +6,6 @@ namespace SImpl.SearchModule.Abstraction.Results
     public class SimplQueryResult : IQueryResult
     {
         public List<ISearchModel> SearchModels { get; set; }
-        public long Total { get; set; }
-        public int Page { get; set; }
         public List<BaseFacet> Facets { get; set; }
         public IList<Filter> Filters { get; set; }
         public bool IsSuccess { get; set; } = false;

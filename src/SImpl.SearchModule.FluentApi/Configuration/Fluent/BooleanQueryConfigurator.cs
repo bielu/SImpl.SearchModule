@@ -13,25 +13,26 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
 
         public BooleanQueryConfigurator Must()
         {
-            Query.Occurance = Occurance.Must;
+            Occurance = Occurance.Must;
             return this;
         }
         public BooleanQueryConfigurator MustNot()
         {
-            Query.Occurance = Occurance.MustNot;
+            Occurance = Occurance.MustNot;
             return this;
         }
         public BooleanQueryConfigurator Should()
         {
-            Query.Occurance = Occurance.Should;
+            Occurance = Occurance.Should;
             return this;
         }
 
         public BooleanQueryConfigurator Filter()
         {
-            Query.Occurance = Occurance.Filter;
+            Occurance = Occurance.Filter;
             return this;
         }
         public INestableQuery Query { get; set; }
+        public Occurance Occurance { get; set; }
     }
 }

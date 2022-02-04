@@ -8,6 +8,16 @@ namespace SImpl.SearchModule.Abstraction.Models
     {
         public DateTime? IndexedAt { get; set; }
         public CultureInfo Culture { get; set; }
+
+        public string SearchCulture
+        {
+            get
+            {
+              return  Culture.IetfLanguageTag.ToLower().Replace("-","");
+            }
+            set { }
+        }
+
         public string ContentKey { get; set; }
         public string Content { get; set; }
         public IList<string> Tags { get; set; } = new List<string>();
@@ -22,5 +32,8 @@ namespace SImpl.SearchModule.Abstraction.Models
             get => ContentKey.ToLowerInvariant();
             set => ContentKey = value;
         }
+
+        public string Facet { get; set; }
+        public List<string> AdditionalKeys { get; set; } = new List<string>();
     }
 }

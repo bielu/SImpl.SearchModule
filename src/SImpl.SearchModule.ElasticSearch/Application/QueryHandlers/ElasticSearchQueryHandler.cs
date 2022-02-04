@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nest;
 using SImpl.CQRS.Queries;
 using SImpl.SearchModule.Abstraction.Handlers;
@@ -8,6 +10,7 @@ using SImpl.SearchModule.Abstraction.Models;
 using SImpl.SearchModule.Abstraction.Queries;
 using SImpl.SearchModule.Abstraction.Results;
 using SImpl.SearchModule.ElasticSearch.Application.Services;
+using SImpl.SearchModule.ElasticSearch.Configuration;
 using SImpl.SearchModule.ElasticSearch.Models;
 using Filter = SImpl.SearchModule.Abstraction.Models.Filter;
 
@@ -17,11 +20,15 @@ namespace SImpl.SearchModule.ElasticSearch.Application.QueryHandlers
     {
         private IElasticSearchQueryTranslatorService _translatorService;
         private readonly IElasticClient _client;
+        private readonly ILogger<ElasticSearchQueryHandler> _logger;
+        private readonly ElasticSearchConfiguration _configuration;
 
-        public ElasticSearchQueryHandler(IElasticSearchQueryTranslatorService translatorService, IElasticClient client)
+        public ElasticSearchQueryHandler(IElasticSearchQueryTranslatorService translatorService, IElasticClient client, ILogger<ElasticSearchQueryHandler> logger, ElasticSearchConfiguration configuration)
         {
             _translatorService = translatorService;
             _client = client;
+            _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task<IQueryResult> HandleAsync(SearchQuery query)
@@ -33,18 +40,32 @@ namespace SImpl.SearchModule.ElasticSearch.Application.QueryHandlers
                return   new SimplQueryResult()
                {
                    SearchModels = new List<ISearchModel>(),
-                   Total = 0,
-                   Page = query.Page
+                 Pagination = new Pagination()
+                 {
+                     Total = 0,
+                     TotalNumberOfPages = 0
+                 }
                };
             }
             var result = await _client.SearchAsync<ElasticSearchModel>(s => searchDescriptor.Index(query.Index.ToLowerInvariant()));
+            if (_configuration.UseDebugStream)
+            {
+                _logger.LogInformation(result.DebugInformation);
+                _logger.LogInformation(searchDescriptor.ToString());
+            }
             var resultModel = new SimplQueryResult()
             {
+               
                 SearchModels = result.Documents.Select(ElasticSearchModelMapper.Map).ToList(),
                 Facets = TranslateFacets(result.Aggregations),
                 Filters = TranslateFilters(result.Aggregations),
-                Total = result.Total,
-                Page = query.Page
+                Pagination = new Pagination()
+                {
+                    CurrentPage = query.Page,
+                    PageSize = query.PageSize,
+                    Total = result.Total,
+                    TotalNumberOfPages = (int)Math.Ceiling((result.Total/ (double)query.PageSize))
+                },
             };
             return resultModel;
         }
@@ -59,7 +80,8 @@ namespace SImpl.SearchModule.ElasticSearch.Application.QueryHandlers
                 {
                     list.Add(new BaseFacet()
                     {
-                        Key = bucket.Key.ToString()
+                        Key = bucket.Key.ToString(),
+                        NumberOfResults = bucket.DocCount
                     });
                 }
             }

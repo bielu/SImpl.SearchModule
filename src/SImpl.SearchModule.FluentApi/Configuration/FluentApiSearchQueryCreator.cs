@@ -17,6 +17,7 @@ namespace SImpl.SearchModule.FluentApi.Configuration
         public ISearchQuery<IQueryResult> CreateSearchQuery(Action<IBaseQueryConfigurator> configurator)
         {
             var newQuery = new FluentQueryConfigurator(_baseQuery);
+            newQuery.Occurance = Occurance.Must;
             configurator.Invoke(newQuery);
             return (ISearchQuery<IQueryResult>)newQuery.Query;
         }

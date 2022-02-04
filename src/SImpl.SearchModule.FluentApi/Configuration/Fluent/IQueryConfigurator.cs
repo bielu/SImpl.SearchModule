@@ -5,5 +5,6 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
     public interface IQueryConfigurator
     {
         public INestableQuery Query { get; set; }
+        Occurance Occurance { get; set; }
     }
 }

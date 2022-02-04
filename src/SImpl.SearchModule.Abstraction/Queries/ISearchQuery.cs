@@ -11,6 +11,7 @@ namespace SImpl.SearchModule.Abstraction.Queries
         public int PageSize { get; set; }
         public List<ISortOrderField> SortOrder { get; set; } 
         public List<IFacetField> FacetFields { get; set; }
+        public  IDictionary<Occurance, ISearchSubQuery> PostFilterQuery { get; set; }
         public string Index { get; set; }
         public DateTime? PreviewAt { get; set; }
         void Add(Occurance queryOccurance, ISearchSubQuery booleanQueryQuery);
