@@ -15,6 +15,24 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent.Extensions
             configurator.Query.Add(configurator.Occurance, booleanQuery.Query);
             return configurator;
         }
+        public static IQueryConfigurator CreateTermsQuery(this IQueryConfigurator configurator,
+            Action<TermsQueryConfigurator> query)
+        {
+            var booleanQuery = new TermsQueryConfigurator();
+            query.Invoke(booleanQuery);
+            booleanQuery.Query.Occurance = configurator.Occurance;
+            configurator.Query.Add(configurator.Occurance, booleanQuery.Query);
+            return configurator;
+        }
+        public static IBaseQueryConfigurator CreateFacetQuery<T>(this IBaseQueryConfigurator configurator,
+            Action<T> query) where T :  IAggregationQuery, new()
+        {
+            var booleanQuery = new T();
+            query.Invoke(booleanQuery);
+            configurator.Query.FacetQueries.Add(booleanQuery);
+            return configurator;
+        }
+        
         public static IQueryConfigurator CreateFuzzyQuery(this IQueryConfigurator configurator, Action<FuzzyQueryConfigurator> query)
         {
             var booleanQuery = new FuzzyQueryConfigurator();
@@ -77,7 +95,15 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent.Extensions
             configurator.Query.Add(configurator.Occurance, booleanQuery.Query);
             return configurator;
         }
-
+        public static IBaseQueryConfigurator CreateTermsQuery(this IBaseQueryConfigurator configurator,
+            Action<TermsQueryConfigurator> query)
+        {
+            var booleanQuery = new TermsQueryConfigurator();
+            query.Invoke(booleanQuery);
+            booleanQuery.Occurance = configurator.Occurance;
+            configurator.Query.Add(configurator.Occurance, booleanQuery.Query);
+            return configurator;
+        }
         public static IBaseQueryConfigurator CreateBoolQuery(this IBaseQueryConfigurator configurator,
             Action<BooleanQueryConfigurator> query)
         {

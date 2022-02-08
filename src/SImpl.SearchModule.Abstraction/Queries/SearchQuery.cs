@@ -11,7 +11,7 @@ namespace SImpl.SearchModule.Abstraction.Queries
         public int Page { get; set; }
         public int PageSize { get; set; }
         public List<ISortOrderField> SortOrder { get; set; } = new List<ISortOrderField>();
-        public List<IFacetField> FacetFields { get; set; } = new List<IFacetField>();
+        public List<IAggregationQuery> FacetQueries { get; set; } = new List<IAggregationQuery>();
 
         public IDictionary<Occurance, ISearchSubQuery> PostFilterQuery { get; set; } =
             new Dictionary<Occurance, ISearchSubQuery>();

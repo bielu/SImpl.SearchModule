@@ -11,24 +11,25 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
     public class BaseElasticSearchQueryTranslatorService : IElasticSearchQueryTranslatorService
     {
         private IEnumerable<ISubQueryElasticTranslator> _collection;
+        private readonly IEnumerable<IFacetElasticTranslator> _facetElasticTranaslators;
 
-        public BaseElasticSearchQueryTranslatorService(IEnumerable<ISubQueryElasticTranslator> collection)
+        public BaseElasticSearchQueryTranslatorService(IEnumerable<ISubQueryElasticTranslator> collection, IEnumerable<IFacetElasticTranslator> facetElasticTranaslators)
         {
             _collection = collection;
+            _facetElasticTranaslators = facetElasticTranaslators;
         }
 
         public SearchDescriptor<ISearchModel> Translate<T>(ISearchQuery<T> query)
             where T : class
         {
             SearchDescriptor<ISearchModel> translated = new SearchDescriptor<ISearchModel>();
-            if (query.FacetFields.Any())
+            if (query.FacetQueries.Any())
             {
                 var facets = new AggregationContainerDescriptor<ISearchModel>();
 
-                foreach (var facetField in query.FacetFields)
+                foreach (var facetField in query.FacetQueries)
                 {
-                    facets.Terms(facetField.FacetGroupName,
-                        t => t.Field(facetField.FieldName).Size(facetField.MaxSize));
+                    TranslateAggregation(facetField, _facetElasticTranaslators, facets);
                 }
 
                 translated = translated.Aggregations(f => facets);
@@ -126,6 +127,38 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
             translated = translated.Skip((query.Page - 1) * query.PageSize);
             translated = translated.Index(query.Index.ToLowerInvariant());
             return translated;
+        }
+
+        private void TranslateAggregation(IAggregationQuery facetField, IEnumerable<IFacetElasticTranslator> facetElasticTranaslators, AggregationContainerDescriptor<ISearchModel> facets)
+        {
+            var type = facetField.GetType();
+            var handlerType =
+                typeof(IFacetElasticTranslator<>).MakeGenericType(type);
+            var translator =
+                _facetElasticTranaslators.FirstOrDefault(x => x.GetType().GetInterfaces().Any(x => x == handlerType));
+            
+            
+            
+               var descriptor =     translator.PrepareAggregation(facetField, _collection);
+               
+            foreach (var aggregation in facetField.NestedAggregations)
+            {
+                  translator.PrepareNestedAggregation(descriptor,aggregation, _collection, (
+                      (containerDescriptor, query, translators) =>
+                      {
+                          var aggregation = new AggregationContainerDescriptor<ISearchModel>();
+                          var type = query.GetType();
+                          var handlerType =
+                              typeof(IFacetElasticTranslator<>).MakeGenericType(type);
+                          var translator =
+                              _facetElasticTranaslators.FirstOrDefault(x => x.GetType().GetInterfaces().Any(x => x == handlerType));
+                          var descriptor =     translator.PrepareAggregation(query, translators);
+                          translator.Translate(aggregation, query,descriptor);
+                          return aggregation;
+                      } ));
+            }
+            translator.Translate(facets, facetField,descriptor);
+            
         }
     }
 }

@@ -47,7 +47,6 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                     }
 
                     return new ElasticClient(connectionString);
-                    break;
                 case AuthenticationModes.Uri: 
                     pool = new SingleNodeConnectionPool(_configuration.Uri);
 
@@ -59,7 +58,6 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                     }
 
                     return new ElasticClient(connectionString);
-                    break;
                 case AuthenticationModes.CloudAuthentication:
                     if (string.IsNullOrEmpty(_configuration.CloudId))
                     {
@@ -75,7 +73,6 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                         connectionString.EnableDebugMode();
                     }
                     return new ElasticClient(connectionString);
-                    break;
                 case AuthenticationModes.CloudApiAuthentication:
                     pool = new CloudConnectionPool(_configuration.CloudId, _configuration.ApiAuthentication);
 
@@ -88,7 +85,6 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                     }
 
                     return new ElasticClient(connectionString);
-                    break;
                 case AuthenticationModes.ConnectionSettingsValues:
                     pool = new CloudConnectionPool(_configuration.CloudId, _configuration.BasicAuthentication);
 
@@ -101,7 +97,6 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                     }
 
                     return new ElasticClient(connectionString);
-                    break;
             }
         }
     }

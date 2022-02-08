@@ -6,8 +6,7 @@ namespace SImpl.SearchModule.Abstraction.Results
     public class SimplQueryResult : IQueryResult
     {
         public List<ISearchModel> SearchModels { get; set; }
-        public List<BaseFacet> Facets { get; set; }
-        public IList<Filter> Filters { get; set; }
+        public List<IAggregation> Aggregations { get; set; } = new List<IAggregation>();
         public bool IsSuccess { get; set; } = false;
         public string ErrorMessage { get; set; }
         public string Culture { get; set; }     

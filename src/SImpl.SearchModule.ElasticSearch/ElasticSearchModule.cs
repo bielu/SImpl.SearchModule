@@ -13,6 +13,7 @@ using SImpl.Modules;
 using SImpl.SearchModule.Abstraction.Queries;
 using SImpl.SearchModule.Core.Application.Services;
 using SImpl.SearchModule.ElasticSearch.Application.Services;
+using SImpl.SearchModule.ElasticSearch.Application.Services.Result;
 using SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries;
 using SImpl.SearchModule.ElasticSearch.Configuration;
 
@@ -47,7 +48,16 @@ namespace SImpl.SearchModule.ElasticSearch
                     .AddClasses(c => c.AssignableTo(typeof(ISubQueryElasticTranslator<>)))
                     .AsImplementedInterfaces()
                     .WithTransientLifetime());
-            
+            services.Scan(s =>
+                s.FromAssemblies(new List<Assembly>(){typeof(ElasticSearchModule).Assembly})
+                    .AddClasses(c => c.AssignableTo(typeof(IFacetElasticTranslator<>)))
+                    .AsImplementedInterfaces()
+                    .WithTransientLifetime());
+            services.Scan(s =>
+                s.FromAssemblies(new List<Assembly>(){typeof(ElasticSearchModule).Assembly})
+                    .AddClasses(c => c.AssignableTo(typeof(IAggregationTranslationService<>)))
+                    .AsImplementedInterfaces()
+                    .WithTransientLifetime());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
