@@ -2,6 +2,10 @@
 
 namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
 {
+    public interface IAggregationConfigurator : IQueryConfigurator
+    {
+        public FilterFacetQuery FilterFacetQuery { get; }
+    }
     public interface IQueryConfigurator
     {
         public INestableQuery Query { get; set; }

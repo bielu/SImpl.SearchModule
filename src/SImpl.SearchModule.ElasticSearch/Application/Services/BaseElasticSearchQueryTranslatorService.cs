@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Nest;
+using SImpl.SearchModule.Abstraction.Fields;
 using SImpl.SearchModule.Abstraction.Models;
 using SImpl.SearchModule.Abstraction.Queries;
 using SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries;
@@ -125,8 +126,28 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
 
             translated = translated.Size(query.PageSize);
             translated = translated.Skip((query.Page - 1) * query.PageSize);
+            if (query.SortOrder != null && query.SortOrder.Any())
+            {
+                translated = translated.Sort(x => TranslateSort(x, query.SortOrder));
+
+            }
             translated = translated.Index(query.Index.ToLowerInvariant());
             return translated;
+        }
+
+        private IPromise<IList<ISort>> TranslateSort(SortDescriptor<ISearchModel> sortDescriptor, List<ISortOrderField> querySortOrder)
+        {
+            foreach (var sort in querySortOrder)
+            {
+                if (sort.Desc)
+                {
+                    sortDescriptor=     sortDescriptor.Descending(new Field(sort.FieldName));
+                    continue;
+                }
+                sortDescriptor.Ascending(new Field(sort.FieldName));
+            }
+
+            return sortDescriptor;
         }
 
         private void TranslateAggregation(IAggregationQuery facetField, IEnumerable<IFacetElasticTranslator> facetElasticTranaslators, AggregationContainerDescriptor<ISearchModel> facets)

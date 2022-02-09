@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SImpl.CQRS.Queries;
+using SImpl.SearchModule.Abstraction.Models;
 using SImpl.SearchModule.Abstraction.Queries;
+using SImpl.SearchModule.Abstraction.Queries.subqueries;
 using SImpl.SearchModule.Abstraction.Results;
 using SImpl.SearchModule.FluentApi.Configuration;
 using SImpl.SearchModule.FluentApi.Configuration.Fluent.Extensions;
+using Simpl.SearchModule.TestApi.Models;
 
 namespace Simpl.SearchModule.TestApi.Controllers
 {
@@ -26,25 +29,160 @@ namespace Simpl.SearchModule.TestApi.Controllers
         }
         
         [HttpGet]
-        public async Task<IEnumerable<string>> Get()
+        public async Task<IEnumerable<string>> Get(SearchRequest request)
         {
-            var query = new FluentApiSearchQueryCreator(new SearchQuery()).CreateSearchQuery(e=>
-            {
-                e.CreateBoolQuery(e => e.Must()
-                    .CreateTermQuery(
-                        t => t
-                            .Should()
-                            .WithField("Title")
-                            .WithValue("I am the best")
-                    )
-                );
+           var query = new FluentApiSearchQueryCreator(new SearchQuery()
+                    {
+                        Index = "headlesssearchindex",
+                        PageSize = request.PageSize,
+                        Page = request.Page
+                    })
+                    .CreateSearchQuery(s =>
+                        {
+                            s.CreateAggregationQuery<TermAggregation>(f =>
+                                {
+                                    f.AggregationName = "facets";
+                                    f.TermFieldName = "facet";
+                                })
+                                .CreateAggregationQuery(facet =>
+                                {
+                                    facet.CreateFilterQuery(f => f.CreateBoolQuery(b =>
+                                    {
+                                        b.Must().CreateTermsQuery(t =>
+                                            t.WithField("facet")
+                                                .WithValue(request.Facets.Select(x => x.Key as object).ToList()));
+                                    }));
+                                })
+                                .CreateAggregationQuery<SImpl.SearchModule.Abstraction.Queries.FilterFacetQuery>(f =>
+                                {
+                                    f.AggregationName = "filters";
+                                    if (request.Facets.Any())
+                                    {
+                                        f.Queries.Add(Occurance.Must, new BoolSearchSubQuery()
+                                        {
+                                            Occurance = Occurance.Must, NestedQueries = new List<ISearchSubQuery>()
+                                            {
+                                                new TermsSubQuery()
+                                                {
+                                                    Field = "facet",
+                                                    Value = request.Facets.Select(x=>x.Key as object).ToList()
+                                                }
+                                            }
+                                        });
+                                        f.NestedAggregations = new List<IAggregationQuery>()
+                                        {
+                                            new TermAggregation()
+                                            {
+                                                AggregationName = "filters",
+                                                TermFieldName = "tags"
+                                            },
+                                        };
+                                    }
+                                    else
+                                    {
+                                      
+                                        f.NestedAggregations = new List<IAggregationQuery>()
+                                        {
+                                            new TermAggregation()
+                                            {
+                                                AggregationName = "filters",
+                                                TermFieldName = "tags"
+                                            },
+                                        };
+                                    }
+                                })
+                                    .CreatePostFilterQuery(e =>
+                                        e.Must().CreateBoolQuery(facetQuery =>
+                                        {
+                                            foreach (var facet in request.Facets)
+                                            {
+                                                facetQuery.Should()
+                                                    .CreateTermQuery(f =>
+                                                        f
+                                                            .WithField("facet")
+                                                            .WithValue(facet.Key));
+                                            }
+                                        }));
+                                    s.CreateBoolQuery(e => e.Must()
+                                        .CreateBoolQuery(facetQuery =>
+                                        {
+                                            foreach (var facet in request.ContentTypes)
+                                            {
+                                                facetQuery.Should()
+                                                    .CreateTermQuery(f =>
+                                                        f
+                                                            .WithField("contentType")
+                                                            .WithValue(facet));
+                                            }
+                                        })
+                                        .CreateBoolQuery(filterquery =>
+                                        {
+                                            filterquery.Must().CreateBoolQuery(subquery =>
+                                            {
+                                                foreach (var filter in request.Filters)
+                                                {
+                                                    foreach (var option in filter.Options)
+                                                    {
+                                                        subquery.Should()
+                                                            .CreateTermQuery(f =>
+                                                                f
+                                                                    .WithField("tags")
+                                                                    .WithValue(option.OptionId));
+                                                    }
+                                                }
+                                            });
+                                        })
+                                        .CreateBoolQuery(filterquery =>
+                                        {
+                                            filterquery.Must().CreateBoolQuery(subquery =>
+                                            {
+                                                foreach (var filter in request.PreFilters)
+                                                {
+                                                    foreach (var option in filter.Options)
+                                                    {
+                                                        subquery.Should()
+                                                            .CreateTermQuery(f =>
+                                                                f
+                                                                    .WithField("tags")
+                                                                    .WithValue(option.OptionId));
+                                                    }
+                                                }
+                                            });
+                                        })
+                                        /* todo: figure out why it is not indexing correctly site or listing id
+                                         .CreateTermQuery(t =>
+                                        {
+                                            if(request.SiteId!= 0){
+                                            t
+                                                .Must()
+                                                .WithField("tags")
+                                                .WithValue(request.SiteId);
+                                            }
+                                        })*/
+                                        .CreateTermQuery(t =>
+                                        {
+                                            t
+                                                .Must()
+                                                .WithField("searchCulture")
+                                                .WithValue(request.Culture.ToLowerInvariant().Replace("-", ""));
+                                        })
+                                        .CreatePrefixQuery(
+                                            t =>
+                                            {
+                                                t
+                                                    .Must()
+                                                    .WithField("content")
+                                                    .WithValue(request.Term.ToLowerInvariant());
+                                            })
+                                    );
+                                    //.CreateBoolQuery(e => e.Should().CreateBoolQuery());
+                                });
 
-                //    .CreateBoolQuery(e => e.Should().CreateBoolQuery());
 
-            });
-            var result = await _queryDispatcher.QueryAsync<IQueryResult>(query);
-            return result.SearchModels.Select(x=>x.ContentKey);
-          
+                            var result = await _queryDispatcher.QueryAsync(query) as SimplQueryResult;
+                            return result;
+
+
         }
     }
 }
