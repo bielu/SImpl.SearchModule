@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SImpl.CQRS.Queries;
 using SImpl.SearchModule.Abstraction.Fields;
+using SImpl.SearchModule.Abstraction.Queries.HighlightQueries;
 using SImpl.SearchModule.Abstraction.Results;
 
 namespace SImpl.SearchModule.Abstraction.Queries
@@ -12,6 +13,7 @@ namespace SImpl.SearchModule.Abstraction.Queries
         public int PageSize { get; set; }
         public List<ISortOrderField> SortOrder { get; set; } = new List<ISortOrderField>();
         public List<IAggregationQuery> FacetQueries { get; set; } = new List<IAggregationQuery>();
+        public List<IHighlightQuery> HighlightQueries { get; set; } = new List<IHighlightQuery>();
 
         public IDictionary<Occurance, ISearchSubQuery> PostFilterQuery { get; set; } =
             new Dictionary<Occurance, ISearchSubQuery>();

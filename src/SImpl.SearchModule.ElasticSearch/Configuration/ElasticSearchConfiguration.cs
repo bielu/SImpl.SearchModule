@@ -15,6 +15,7 @@ namespace SImpl.SearchModule.ElasticSearch.Configuration
         public bool UseDebugStream { get; set; } = false;
         public Uri Uri { get; set; }
         public string IndexPrefixName { get; set; } = "";
+        public bool UseZeroDowntimeIndexing { get; set; }
         
     }
 }

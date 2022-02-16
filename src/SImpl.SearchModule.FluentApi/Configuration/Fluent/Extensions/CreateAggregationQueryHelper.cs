@@ -5,6 +5,7 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent.Extensions
 {
     public static class CreateAggregationQueryHelper
     {
+        //todo: better dsl coverage
         public static IBaseQueryConfigurator CreateAggregationQuery<T>(this IBaseQueryConfigurator configurator,
             Action<T> query) where T :  IAggregationQuery, new()
         {

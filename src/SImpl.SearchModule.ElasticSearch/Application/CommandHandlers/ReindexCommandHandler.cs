@@ -4,24 +4,23 @@ using System.Threading.Tasks;
 using Nest;
 using SImpl.CQRS.Commands;
 using SImpl.SearchModule.Abstraction.Commands;
-using SImpl.SearchModule.Abstraction.Models;
 using SImpl.SearchModule.ElasticSearch.Configuration;
 using SImpl.SearchModule.ElasticSearch.Models;
 
 namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
 {
-    public class IndexCommandHandler : ICommandHandler<IndexCommand>
+    public class ReindexCommandHandler : ICommandHandler<ReIndexCommand>
     {
         private readonly IElasticClient _client;
         private readonly ElasticSearchConfiguration _elasticSearchConfiguration;
 
-        public IndexCommandHandler(IElasticClient client, ElasticSearchConfiguration elasticSearchConfiguration)
+        public ReindexCommandHandler(IElasticClient client, ElasticSearchConfiguration elasticSearchConfiguration)
         {
             _client = client;
             _elasticSearchConfiguration = elasticSearchConfiguration;
         }
 
-        public async Task HandleAsync(IndexCommand command)
+        public async Task HandleAsync(ReIndexCommand command)
         {
             var indexAlias = command.Index.ToLowerInvariant();
             var indexName = _elasticSearchConfiguration.UseZeroDowntimeIndexing
@@ -29,31 +28,37 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
                 : indexAlias + DateTime.Now.ToString("-dd-MMM-HH-mm-ss");
 
             var index = await _client.Indices.ExistsAsync(indexAlias);
-            if (!index.Exists)
-            {
-                var answer = await _client.Indices.CreateAsync(indexName, index =>
-                {
-                    if (_elasticSearchConfiguration.UseZeroDowntimeIndexing)
-                    {
-                        index = index.Aliases(x => x.Alias(indexAlias));
-                    }
 
-                    return index.Map(f => f.AutoMap<ElasticSearchModel>().Properties<ElasticSearchModel>(ps => ps
-                        .Keyword(s => s
-                            .Name(n => n.ContentType)
-                        ).Keyword(s => s
-                            .Name(n => n.Facet)
-                        ).Keyword(s => s
-                            .Name(n => n.Tags)
-                        )));
-                });
-            }
+            var answer = await _client.Indices.CreateAsync(indexName, index =>
+            {
+                return index.Map(f => f.AutoMap<ElasticSearchModel>().Properties<ElasticSearchModel>(ps => ps
+                    .Keyword(s => s
+                        .Name(n => n.ContentType)
+                    ).Keyword(s => s
+                        .Name(n => n.Facet)
+                    ).Keyword(s => s
+                        .Name(n => n.Tags)
+                    )));
+            });
+
 
             var answerIndex = await _client.BulkAsync(x =>
                 x.IndexMany<ElasticSearchModel>(command.Models.Select(ElasticSearchModelMapper.Map)
                     .ToList(), (bulkDes, record) => bulkDes
                     .Index(indexAlias)
                     .Document(record)));
+            var oldIndexes = await _client.Indices.GetAliasAsync(indexAlias);
+            await _client.Indices.PutAliasAsync(answer.Index, indexAlias);
+
+            if (oldIndexes.IsValid && oldIndexes.Indices.Any())
+            {
+                foreach (var oldIndex in oldIndexes.Indices)
+                {
+                    await _client.Indices.DeleteAsync(answer.Index);
+                }
+            }
+
+
             if (answerIndex.Errors)
             {
                 throw new Exception(answerIndex.DebugInformation);
@@ -61,3 +66,4 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
         }
     }
 }
+
