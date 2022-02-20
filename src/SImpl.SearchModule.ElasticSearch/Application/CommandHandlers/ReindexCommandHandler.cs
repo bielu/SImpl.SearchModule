@@ -22,7 +22,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
 
         public async Task HandleAsync(ReIndexCommand command)
         {
-            var indexAlias = command.Index.ToLowerInvariant();
+            var indexAlias =  _elasticSearchConfiguration.IndexPrefixName+command.Index.ToLowerInvariant();
             var indexName = _elasticSearchConfiguration.UseZeroDowntimeIndexing
                 ? indexAlias
                 : indexAlias + DateTime.Now.ToString("-dd-MMM-HH-mm-ss");

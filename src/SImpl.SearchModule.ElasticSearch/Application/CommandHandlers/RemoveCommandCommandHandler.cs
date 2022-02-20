@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Nest;
 using SImpl.CQRS.Commands;
 using SImpl.SearchModule.Abstraction.Commands;
+using SImpl.SearchModule.ElasticSearch.Configuration;
 using SImpl.SearchModule.ElasticSearch.Models;
 
 namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
@@ -11,14 +12,16 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
     public class RemoveCommandCommandHandler : ICommandHandler<RemoveCommand>
     {
         private readonly IElasticClient _client;
+        private readonly ElasticSearchConfiguration _elasticSearchConfiguration;
 
-        public RemoveCommandCommandHandler(IElasticClient client)
+        public RemoveCommandCommandHandler(IElasticClient client, ElasticSearchConfiguration elasticSearchConfiguration)
         {
             _client = client;
+            _elasticSearchConfiguration = elasticSearchConfiguration;
         }
         public async Task HandleAsync(RemoveCommand command)
         {
-               var  index =await _client.Indices.ExistsAsync(command.Index.ToLowerInvariant());
+               var  index =await _client.Indices.ExistsAsync(_elasticSearchConfiguration.IndexPrefixName+command.Index.ToLowerInvariant());
             if (!index.Exists)
             {
                 var answer = await _client.Indices.CreateAsync(command.Index.ToLowerInvariant(), index=>index.Map(f=>f.AutoMap<ElasticSearchModel>().Properties<ElasticSearchModel>(ps => ps

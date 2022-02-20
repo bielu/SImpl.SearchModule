@@ -39,8 +39,9 @@ namespace SImpl.SearchModule.ElasticSearch.Application.QueryHandlers
 
         public async Task<IQueryResult> HandleAsync(SearchQuery query)
         {
+            var indexName = _configuration.IndexPrefixName + query.Index.ToLowerInvariant();
             SearchDescriptor<ISearchModel> searchDescriptor = _translatorService.Translate(query);
-            var index = await _client.Indices.ExistsAsync(query.Index.ToLowerInvariant());
+            var index = await _client.Indices.ExistsAsync(indexName);
             if (!index.Exists)
             {
                 return new SimplQueryResult()

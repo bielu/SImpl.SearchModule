@@ -23,10 +23,10 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
 
         public async Task HandleAsync(IndexCommand command)
         {
-            var indexAlias = command.Index.ToLowerInvariant();
-            var indexName = _elasticSearchConfiguration.UseZeroDowntimeIndexing
+            var indexAlias =_elasticSearchConfiguration.IndexPrefixName+ command.Index.ToLowerInvariant();
+            var indexName = ( _elasticSearchConfiguration.UseZeroDowntimeIndexing
                 ? indexAlias
-                : indexAlias + DateTime.Now.ToString("-dd-MMM-HH-mm-ss");
+                : indexAlias + DateTime.Now.ToString("-dd-MMM-HH-mm-ss"));
 
             var index = await _client.Indices.ExistsAsync(indexAlias);
             if (!index.Exists)
@@ -38,14 +38,17 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
                         index = index.Aliases(x => x.Alias(indexAlias));
                     }
 
-                    return index.Map(f => f.AutoMap<ElasticSearchModel>().Properties<ElasticSearchModel>(ps => ps
+                    return index.Map(f => f.Properties<ElasticSearchModel>(ps => ps
+                        .Keyword(s => s
+                            .Name(n => n.Id)
+                        )
                         .Keyword(s => s
                             .Name(n => n.ContentType)
                         ).Keyword(s => s
                             .Name(n => n.Facet)
                         ).Keyword(s => s
                             .Name(n => n.Tags)
-                        )));
+                        )).AutoMap<ElasticSearchModel>());
                 });
             }
 
