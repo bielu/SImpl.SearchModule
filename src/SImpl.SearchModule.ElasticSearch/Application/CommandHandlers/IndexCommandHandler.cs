@@ -5,6 +5,7 @@ using Nest;
 using SImpl.CQRS.Commands;
 using SImpl.SearchModule.Abstraction.Commands;
 using SImpl.SearchModule.Abstraction.Models;
+using SImpl.SearchModule.ElasticSearch.Application.Services;
 using SImpl.SearchModule.ElasticSearch.Configuration;
 using SImpl.SearchModule.ElasticSearch.Models;
 
@@ -14,11 +15,13 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
     {
         private readonly IElasticClient _client;
         private readonly ElasticSearchConfiguration _elasticSearchConfiguration;
+        private readonly IElasticMapper _elasticMapper;
 
-        public IndexCommandHandler(IElasticClient client, ElasticSearchConfiguration elasticSearchConfiguration)
+        public IndexCommandHandler(IElasticClient client, ElasticSearchConfiguration elasticSearchConfiguration, IElasticMapper elasticMapper)
         {
             _client = client;
             _elasticSearchConfiguration = elasticSearchConfiguration;
+            _elasticMapper = elasticMapper;
         }
 
         public async Task HandleAsync(IndexCommand command)
@@ -38,17 +41,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
                         index = index.Aliases(x => x.Alias(indexAlias));
                     }
 
-                    return index.Map(f => f.Properties<ElasticSearchModel>(ps => ps
-                        .Keyword(s => s
-                            .Name(n => n.Id)
-                        )
-                        .Keyword(s => s
-                            .Name(n => n.ContentType)
-                        ).Keyword(s => s
-                            .Name(n => n.Facet)
-                        ).Keyword(s => s
-                            .Name(n => n.Tags)
-                        )).AutoMap<ElasticSearchModel>());
+                    return index.Map(f => _elasticMapper.Map(f));
                 });
             }
 

@@ -39,6 +39,7 @@ namespace SImpl.SearchModule.ElasticSearch
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(typeof(ElasticSearchConfiguration), (services) => Config);
+            services.AddSingleton(typeof(IElasticMapper), Config.ElasticModelMapper);
             services.AddTransient(typeof(IElasticSearchClientFactory), typeof(ElasticSearchClientFactory));
             services.AddTransient(typeof(IElasticClient), provider => provider.GetService<IElasticSearchClientFactory>().CreateClient());
             services.AddTransient<IElasticSearchQueryTranslatorService, BaseElasticSearchQueryTranslatorService>();
