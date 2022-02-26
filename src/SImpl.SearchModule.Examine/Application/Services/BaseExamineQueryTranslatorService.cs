@@ -6,7 +6,7 @@ using SImpl.SearchModule.Abstraction.Fields;
 using SImpl.SearchModule.Abstraction.Models;
 using SImpl.SearchModule.Abstraction.Queries;
 using SImpl.SearchModule.Abstraction.Queries.HighlightQueries;
-using SImpl.SearchModule.Examine.Application.Services.FacetQueries;
+using SImpl.SearchModule.Examine.Application.LuceneEngine;
 using SImpl.SearchModule.Examine.Application.Services.SubQueries;
 
 namespace SImpl.SearchModule.Examine.Application.Services
@@ -14,14 +14,11 @@ namespace SImpl.SearchModule.Examine.Application.Services
     public class BaseExamineQueryTranslatorService : IExamineQueryTranslatorService
     {
         private IEnumerable<ISubQueryElasticTranslator> _collection;
-        private readonly IEnumerable<IFacetElasticTranslator> _facetElasticTranaslators;
         private readonly IExamineManager _examineManager;
 
-        public BaseExamineQueryTranslatorService(IEnumerable<ISubQueryElasticTranslator> collection,
-            IEnumerable<IFacetElasticTranslator> facetElasticTranaslators, IExamineManager examineManager)
+        public BaseExamineQueryTranslatorService(IEnumerable<ISubQueryElasticTranslator> collection, IExamineManager examineManager)
         {
             _collection = collection;
-            _facetElasticTranaslators = facetElasticTranaslators;
             _examineManager = examineManager;
         }
 
@@ -30,8 +27,36 @@ namespace SImpl.SearchModule.Examine.Application.Services
         {
             var searcher = index.Searcher;
             IQuery translatedQuery = searcher.CreateQuery();
-            translatedQuery.All().Execute()
-           
+            var nestedQuery = translatedQuery as LuceneSearchQueryWithFiltersAndFacets;
+
+            foreach (var booleanQuery in query)
+            {
+                var type = booleanQuery.GetType();
+                var handlerType =
+                    typeof(ISubQueryElasticTranslator<>).MakeGenericType(type);
+
+                var translator =
+                    _collection.FirstOrDefault(x => x.GetType().GetInterfaces().Any(x => x == handlerType));
+                if (translator == null)
+                {
+                    continue;
+                }
+                switch (booleanQuery.Key)
+                {
+                    case Occurance.MustNot:
+                        nestedQuery.Not(translator.Translate<T>(searcher,_collection, booleanQuery.Value));
+                        break;
+                    case Occurance.Must:
+                        nestedQuery.And(translator.Translate<T>(searcher,_collection, booleanQuery.Value));
+                        break;
+                    case Occurance.Should:
+                        nestedQuery.Or(translator.Translate<T>(searcher,_collection, booleanQuery.Value));
+                        break;
+                }
+            }
+
+            return translatedQuery;
+
         }
 
        

@@ -108,10 +108,7 @@ namespace SImpl.SearchModule.Examine.Application.LuceneEngine
             using (ISearcherReference searcher = _searchContext.GetSearcher())
             {
                 //todo: figure out facet fields
-                if ()
-                {
-                    
-                }
+            
                 if (_filter == null)
                 {
                     searcher.IndexSearcher.Search(_luceneQuery, topDocsCollector);
