@@ -13,6 +13,6 @@ namespace SImpl.SearchModule.Abstraction.Results
         public string Term { get; set; }
         public Pagination Pagination { get; set; }
         public List<Sort> Sorts { get; set; }
-        public HighLighter HighLighter { get; set; }
+        public HighLighter HighLighter { get; set; } = new HighLighter();
     }
 }

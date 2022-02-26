@@ -8,8 +8,8 @@ namespace SImpl.SearchModule.Abstraction.Commands
     public class RemoveCommand : ICommand
     {
         public string Index { get; set; }
-        public List<Guid> ModelsIds { get; set; }
-        public List<string> ModelsKeys { get; set; }
-        public List<ISearchModel> Models { get; set; }
+        public List<Guid> ModelsIds { get; set; } = new List<Guid>();
+        public List<string> ModelsKeys { get; set; } = new List<string>();
+        public List<ISearchModel> Models { get; set; } = new List<ISearchModel>();
     }
 }

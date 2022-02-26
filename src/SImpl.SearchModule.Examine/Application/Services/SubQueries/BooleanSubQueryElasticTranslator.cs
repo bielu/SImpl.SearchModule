@@ -1,53 +1,68 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Examine;
+using Examine.Lucene.Providers;
 using Examine.Lucene.Search;
 using Examine.Search;
+using Lucene.Net.Search;
 using SImpl.SearchModule.Abstraction.Queries;
 using SImpl.SearchModule.Abstraction.Queries.subqueries;
+using SImpl.SearchModule.Examine.Application.LuceneEngine;
 
 namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
 {
-    public class BooleanSubQueryElasticTranslator : ISubQueryExamineTranslator<BoolSearchSubQuery>
+    public class BooleanSubQueryElasticTranslator : ISubQueryElasticTranslator<BoolSearchSubQuery>
     {
       
-        public INestedBooleanOperation Translate<TViewModel>(IEnumerable<ISubQueryExamineTranslator> collection, ISearchSubQuery query, IQuery luceneQuery) where TViewModel : class
+        public Query Translate<TViewModel>(ISearcher searcher,IEnumerable<ISubQueryElasticTranslator> collection, ISearchSubQuery query) where TViewModel : class
         {
+            var searcherBase = searcher as BaseLuceneSearcher;
+            var nestedQuery = new LuceneSearchQueryWithFiltersAndFacets(searcherBase.GetSearchContext(),"baseSearch" ,searcherBase.LuceneAnalyzer, new LuceneSearchOptions(), MapOccuranceToExamine(query.Occurance));
             var boolQuery = (BoolSearchSubQuery)query;
-            var luceneSearchQuery = luceneQuery as LuceneSearchQuery;
-            INestedBooleanOperation queryContainer = new LuceneBooleanOperation(luceneSearchQuery);
-
-            foreach (var subQuery in boolQuery.NestedQueries)
-            {
-                var type = subQuery.GetType();
-                var handlerType = typeof(ISubQueryExamineTranslator<>).MakeGenericType(typeof(ISubQueryExamineTranslator<>), type);
-                var translator =
-                    collection.FirstOrDefault(x => x.GetType().GetGenericTypeDefinition() == handlerType);
-                if (translator == null)
+           
+                var nestedExamineQuery=nestedQuery as LuceneSearchQueryWithFiltersAndFacets;
+                foreach (var booleanQuery in boolQuery.NestedQueries)
                 {
-                    continue;
+                    var type = booleanQuery.GetType();
+                    var handlerType =
+                        typeof(ISubQueryElasticTranslator<>).MakeGenericType(type);
+
+                    var translator =
+                        collection.FirstOrDefault(x => x.GetType().GetInterfaces().Any(x => x == handlerType));
+                    if (translator == null)
+                    {
+                        continue;
+                    }
+                    switch (booleanQuery.Occurance)
+                    {
+                        case Occurance.MustNot:
+                            nestedExamineQuery.Not(translator.Translate<TViewModel>(collection, booleanQuery));
+                            break;
+                        case Occurance.Must:
+                            nestedExamineQuery.And(translator.Translate<TViewModel>(collection, booleanQuery));
+                            break;
+                        case Occurance.Should:
+                            nestedExamineQuery.Or(translator.Translate<TViewModel>(collection, booleanQuery));
+                            break;
+                    }
                 }
 
-                switch (subQuery.Occurance)
-                {
-                    //That is overcomplicated, but we are abstracting out all layers of query, so dont think so there exists simpler way, but happy to change
-                    case Occurance.Filter:
-                        queryContainer=   queryContainer.And(e=>translator.Translate<TViewModel>(collection, subQuery,  (IQuery)e));
-                        break;
-                    case Occurance.Must:
-                        queryContainer.And(e=>translator.Translate<TViewModel>(collection,subQuery, (IQuery)e) );
-                        break;
-                    case Occurance.MustNot:
-                        queryContainer.AndNot(e=>translator.Translate<TViewModel>(collection,subQuery,  (IQuery)e) );;
-                        break;
-                    case Occurance.Should:
-                        queryContainer.And(e =>translator.Translate<TViewModel>(collection,subQuery,  (IQuery)e), BooleanOperation.Or );;
-                        break;
-                }
-            }
-            return queryContainer;
+                return nestedQuery.Query;
+
         }
 
-        
+        private BooleanOperation MapOccuranceToExamine(Occurance queryOccurance)
+        {
+            switch (queryOccurance)
+            {
+                case Occurance.Should:
+                    return BooleanOperation.Or;
+                case Occurance.Must:
+                    return BooleanOperation.And;
+                case Occurance.MustNot:
+                    return BooleanOperation.Not;
+            }
+            return BooleanOperation.Or;
+        }
     }
 }

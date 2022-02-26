@@ -16,11 +16,6 @@ namespace Simpl.SearchModule.TestApi.Models
 
         public int PageSize { get; set; } = 10;
 
-        public IEnumerable<DefaultFilter> Filters { get; set; } = (IEnumerable<DefaultFilter>) new List<DefaultFilter>();
-
-        public IEnumerable<DefaultFilter> PreFilters { get; set; } = (IEnumerable<DefaultFilter>) new List<DefaultFilter>();
-
-        public IEnumerable<DefaultFilter> Facets { get; set; } = (IEnumerable<DefaultFilter>) new List<DefaultFilter>();
 
         public IEnumerable<string> ContentTypes { get; set; } = (IEnumerable<string>) new List<string>();
 

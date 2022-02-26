@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Examine.Lucene.Search;
 using Examine.Search;
+using Lucene.Net.Search;
 using SImpl.SearchModule.Abstraction.Queries;
 
 namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
 {
-    public interface ISubQueryExamineTranslator<T> : ISubQueryExamineTranslator where T : ISearchSubQuery
+    public interface ISubQueryElasticTranslator<T> : ISubQueryElasticTranslator where T : ISearchSubQuery
     {
      
     }
 
-    public interface ISubQueryExamineTranslator
+    public interface ISubQueryElasticTranslator
     {
-        INestedBooleanOperation Translate<TViewModel>(IEnumerable<ISubQueryExamineTranslator> collection, ISearchSubQuery query, IQuery luceneQuery) where TViewModel : class;
+        public Query Translate<TViewModel>(IEnumerable<ISubQueryElasticTranslator> collection,ISearchSubQuery query) where TViewModel : class;
     }
 }

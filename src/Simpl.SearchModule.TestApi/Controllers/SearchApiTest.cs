@@ -29,7 +29,7 @@ namespace Simpl.SearchModule.TestApi.Controllers
         }
         
         [HttpGet]
-        public async Task<IEnumerable<string>> Get(SearchRequest request)
+        public async Task<SimplQueryResult> Get(SearchRequest request)
         {
            var query = new FluentApiSearchQueryCreator(new SearchQuery()
                     {
@@ -43,67 +43,7 @@ namespace Simpl.SearchModule.TestApi.Controllers
                                 {
                                     f.AggregationName = "facets";
                                     f.TermFieldName = "facet";
-                                })
-                                .CreateAggregationQuery(facet =>
-                                {
-                                    facet.CreateFilterQuery(f => f.CreateBoolQuery(b =>
-                                    {
-                                        b.Must().CreateTermsQuery(t =>
-                                            t.WithField("facet")
-                                                .WithValue(request.Facets.Select(x => x.Key as object).ToList()));
-                                    }));
-                                })
-                                .CreateAggregationQuery<SImpl.SearchModule.Abstraction.Queries.FilterFacetQuery>(f =>
-                                {
-                                    f.AggregationName = "filters";
-                                    if (request.Facets.Any())
-                                    {
-                                        f.Queries.Add(Occurance.Must, new BoolSearchSubQuery()
-                                        {
-                                            Occurance = Occurance.Must, NestedQueries = new List<ISearchSubQuery>()
-                                            {
-                                                new TermsSubQuery()
-                                                {
-                                                    Field = "facet",
-                                                    Value = request.Facets.Select(x=>x.Key as object).ToList()
-                                                }
-                                            }
-                                        });
-                                        f.NestedAggregations = new List<IAggregationQuery>()
-                                        {
-                                            new TermAggregation()
-                                            {
-                                                AggregationName = "filters",
-                                                TermFieldName = "tags"
-                                            },
-                                        };
-                                    }
-                                    else
-                                    {
-                                      
-                                        f.NestedAggregations = new List<IAggregationQuery>()
-                                        {
-                                            new TermAggregation()
-                                            {
-                                                AggregationName = "filters",
-                                                TermFieldName = "tags"
-                                            },
-                                        };
-                                    }
-                                })
-                                    .CreatePostFilterQuery(e =>
-                                        e.Must().CreateBoolQuery(facetQuery =>
-                                        {
-                                            foreach (var facet in request.Facets)
-                                            {
-                                                facetQuery.Should()
-                                                    .CreateTermQuery(f =>
-                                                        f
-                                                            .WithField("facet")
-                                                            .WithValue(facet.Key));
-                                            }
-                                        }));
-                                    s.CreateBoolQuery(e => e.Must()
+                                }).CreateBoolQuery(e => e.Must()
                                         .CreateBoolQuery(facetQuery =>
                                         {
                                             foreach (var facet in request.ContentTypes)
@@ -115,50 +55,7 @@ namespace Simpl.SearchModule.TestApi.Controllers
                                                             .WithValue(facet));
                                             }
                                         })
-                                        .CreateBoolQuery(filterquery =>
-                                        {
-                                            filterquery.Must().CreateBoolQuery(subquery =>
-                                            {
-                                                foreach (var filter in request.Filters)
-                                                {
-                                                    foreach (var option in filter.Options)
-                                                    {
-                                                        subquery.Should()
-                                                            .CreateTermQuery(f =>
-                                                                f
-                                                                    .WithField("tags")
-                                                                    .WithValue(option.OptionId));
-                                                    }
-                                                }
-                                            });
-                                        })
-                                        .CreateBoolQuery(filterquery =>
-                                        {
-                                            filterquery.Must().CreateBoolQuery(subquery =>
-                                            {
-                                                foreach (var filter in request.PreFilters)
-                                                {
-                                                    foreach (var option in filter.Options)
-                                                    {
-                                                        subquery.Should()
-                                                            .CreateTermQuery(f =>
-                                                                f
-                                                                    .WithField("tags")
-                                                                    .WithValue(option.OptionId));
-                                                    }
-                                                }
-                                            });
-                                        })
-                                        /* todo: figure out why it is not indexing correctly site or listing id
-                                         .CreateTermQuery(t =>
-                                        {
-                                            if(request.SiteId!= 0){
-                                            t
-                                                .Must()
-                                                .WithField("tags")
-                                                .WithValue(request.SiteId);
-                                            }
-                                        })*/
+                                       
                                         .CreateTermQuery(t =>
                                         {
                                             t

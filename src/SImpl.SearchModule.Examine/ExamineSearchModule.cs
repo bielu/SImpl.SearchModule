@@ -51,7 +51,7 @@ namespace SImpl.SearchModule.Examine
                     .AddClasses(c => c.AssignableTo(typeof(IExamineQueryTranslatorService)))
                     .AsImplementedInterfaces()
                     .WithTransientLifetime());
-            services.AddExamineLuceneIndex<LuceneIndex, ConfigurationEnabledDirectoryFactory>("duplicationIndex", Config.FieldsDefinition);
+            services.AddExamineLuceneIndex<LuceneIndex, ConfigurationEnabledDirectoryFactory>(Config.IndexPrefixName+Config.IndexName, Config.FieldsDefinition);
         }
 
     }

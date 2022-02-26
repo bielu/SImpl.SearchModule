@@ -1,26 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Examine;
 using Microsoft.Extensions.Logging;
 using SImpl.CQRS.Commands;
 using SImpl.SearchModule.Abstraction.Commands;
-using SImpl.SearchModule.Abstraction.Models;
 using SImpl.SearchModule.Examine.Application.Services;
 using SImpl.SearchModule.Examine.Configuration;
 using SImpl.SearchModule.Examine.Models;
 
 namespace SImpl.SearchModule.Examine.Application.CommandHandlers
 {
-    public class IndexCommandHandler : ICommandHandler<IndexCommand>
+    public class RemoveCommandCommandHandler : ICommandHandler<RemoveCommand>
     {
         private readonly IExamineManager _examineManager;
         private readonly ExamineSearchConfiguration _configuration;
         private readonly ILogger<IndexCommandHandler> _logger;
 
-
-        public IndexCommandHandler(IExamineManager examineManager, ExamineSearchConfiguration configuration,
+        public RemoveCommandCommandHandler(IExamineManager examineManager, ExamineSearchConfiguration configuration,
             ILogger<IndexCommandHandler> logger)
         {
             _examineManager = examineManager;
@@ -28,7 +25,7 @@ namespace SImpl.SearchModule.Examine.Application.CommandHandlers
             _logger = logger;
         }
 
-        public async Task HandleAsync(IndexCommand command)
+        public async Task HandleAsync(RemoveCommand command)
         {
             var indexName = _configuration.IndexPrefixName + command.Index.ToLowerInvariant();
             _examineManager.TryGetIndex(indexName,
@@ -39,32 +36,43 @@ namespace SImpl.SearchModule.Examine.Application.CommandHandlers
                 return;
             }
 
-            try
+            if (command.Models.Any())
             {
-                if (!examineIndex.IndexExists())
+                try
                 {
-                    examineIndex.CreateIndex();
+                    examineIndex.DeleteFromIndex(command.Models.Select(x=>x.Id));
                 }
-
-                examineIndex.IndexItems(TranslateModel(command.Models));
+                catch (Exception e)
+                {
+                    _logger.LogError($"remove from index {indexName} failed");
+                }
             }
-            catch (Exception e)
+            else if (command.ModelsIds.Any())
             {
-                _logger.LogError($"Indexing for {indexName} failed", e);
-            }
-        }
+                try
+                {
+                    examineIndex.DeleteFromIndex(command.ModelsIds.Select(x=>x.ToString()));
 
-        private IEnumerable<ValueSet> TranslateModel(List<ISearchModel> commandModels)
-        {
-            var modelList = new List<ValueSet>();
-            foreach (var model in commandModels)
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"remove from index {indexName} failed");
+                }
+          
+            }else if (command.ModelsKeys.Any())
             {
-                var translatedModel = ValueSet.FromObject(model.Id, "search", model.ContentType, model);
+                try
+                {
+                    examineIndex.DeleteFromIndex(command.ModelsKeys);
 
-                modelList.Add(translatedModel);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"remove from index {indexName} failed");
+                }
+               
             }
-
-            return modelList;
+          
         }
     }
 }

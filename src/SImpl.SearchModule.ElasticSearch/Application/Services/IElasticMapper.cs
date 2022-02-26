@@ -27,28 +27,28 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                                 var textProperty = property as TextElasticProperty;
                                 ps = ps
                                     .Keyword(s => s
-                                        .Name(n => property.Name)
+                                        .Name(textProperty.Name)
                                         .Boost(textProperty.Boost)
                                         .SplitQueriesOnWhitespace(textProperty.SplitQueriesOnWhiteSpace)
                                     );
                                 break;
                             case AnalyzerType.Binary:
                                 ps = ps.Binary(s => s
-                                    .Name(n => property.Name));
+                                    .Name(property.Name));
                                 break;
                             case AnalyzerType.Boolean:
                                 ps = ps.Binary(s => s
-                                    .Name(n => property.Name));
+                                    .Name(property.Name));
                                 break;
                             case AnalyzerType.Text:
                                 textProperty = property as TextElasticProperty;
                                 ps = ps.Text(s => s
-                                    .Name(n => property.Name).Boost(textProperty.Boost));
+                                    .Name(property.Name).Boost(textProperty.Boost));
                                 break;
                             case AnalyzerType.Date:
                                 var dateProperty = property as DateElasticProperty;
                                 ps = ps.Date(s => s
-                                    .Name(n => property.Name).Boost(dateProperty.Boost).Format(dateProperty.Format));
+                                    .Name(property.Name).Boost(dateProperty.Boost).Format(dateProperty.Format));
                                 break;
                         }
                     }

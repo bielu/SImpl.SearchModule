@@ -21,7 +21,30 @@ namespace SImpl.SearchModule.ElasticSearch.Configuration
         public string IndexPrefixName { get; set; } = "";
         public bool UseZeroDowntimeIndexing { get; set; }
         public Type ElasticModelMapper { get; set; } = typeof(DefaultElasticMapper);
-        public Dictionary<AnalyzerType,List<IElasticProperty>> ElasticPropertiesFields { get; set; } = new Dictionary<AnalyzerType,List<IElasticProperty>>();
+        public Dictionary<AnalyzerType,List<IElasticProperty>> ElasticPropertiesFields { get; set; } = new Dictionary<AnalyzerType,List<IElasticProperty>>()
+        {
+            { AnalyzerType.Keyword , new List<IElasticProperty>()
+            {
+                new TextElasticProperty()
+                {
+                    Name = "Id"
+                },
+                new TextElasticProperty()
+                {
+                    Name ="ContentType"
+                },
+                new TextElasticProperty()
+                {
+                    Name ="ContentType"
+                },   new TextElasticProperty()
+                {
+                    Name ="Facet"
+                },   new TextElasticProperty()
+                {
+                    Name ="Tags"
+                },
+            }}
+        };
 
         public ElasticSearchConfiguration MapProperty(AnalyzerType type, IElasticProperty property)
         {

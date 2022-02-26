@@ -4,16 +4,17 @@ using SImpl.SearchModule.Abstraction.Queries.subqueries;
 
 namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
 {
-    public class TermSubQueryElasticTranslator : ISubQueryElasticTranslator<TermSubQuery>
+    public class PrefixSubQueryElasticTranslator: ISubQueryElasticTranslator<PrefixSubQuery>
     {
         public QueryContainerDescriptor<TViewModel> Translate<TViewModel>(IEnumerable<ISubQueryElasticTranslator> collection, ISearchSubQuery query) where TViewModel : class
         {
-            var castedQuery = (TermSubQuery)query;
+            var castedQuery = (PrefixSubQuery)query;
             var queryResult = new QueryContainerDescriptor<TViewModel>();
-            queryResult.Term(x => x.Field(new Field(castedQuery.Field)).Value(castedQuery.Value));
+            queryResult.Prefix(x => x.Field(new Field(castedQuery.Field)).Value(castedQuery.Value).Boost(castedQuery.BoostValue));
             return queryResult;
         }
 
       
+    
     }
 }

@@ -157,7 +157,6 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                     {
                         f = f.Field(query.Field);
                     }
-
                     if (query.Queries != null && query.Queries.Any())
                     {
                     

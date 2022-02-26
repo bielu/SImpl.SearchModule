@@ -51,13 +51,14 @@ namespace SImpl.SearchModule.ElasticSearch.Application.QueryHandlers
                     {
                         Total = 0,
                         TotalNumberOfPages = 0
-                    }
+                    },
+                    HighLighter = new HighLighter()
                 };
             }
 
             var result =
                 await _client.SearchAsync<ElasticSearchModel>(s =>
-                    searchDescriptor.Index(query.Index.ToLowerInvariant()));
+                    searchDescriptor.Index(indexName));
             if (_configuration.UseDebugStream)
             {
                 _logger.LogInformation(result.DebugInformation);
@@ -75,8 +76,24 @@ namespace SImpl.SearchModule.ElasticSearch.Application.QueryHandlers
                     Total = result.Total,
                     TotalNumberOfPages = (int)Math.Ceiling((result.Total / (double)query.PageSize))
                 },
+                HighLighter = TranslateHighLighter(result.Hits)
             };
             return resultModel;
+        }
+
+        private HighLighter TranslateHighLighter(IReadOnlyCollection<IHit<ElasticSearchModel>> resultHits)
+        {
+            var highLghter = new HighLighter();
+            foreach (var hit in resultHits)
+            {
+                foreach (var highlightHit in hit.Highlight)
+                {
+                    highLghter.Add(highlightHit.Key,highlightHit.Value.Select(x=>x as object).ToList()); 
+                }
+          
+            }
+
+            return highLghter;
         }
 
         private List<IAggregation> TranslateAggregations(AggregateDictionary resultAggregations)
