@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using Nest;
 using SImpl.SearchModule.Abstraction.Queries;
-using DateRange = SImpl.SearchModule.Abstraction.Queries.subqueries.DateRange;
+using DateRangeQuery = SImpl.SearchModule.Abstraction.Queries.subqueries.DateRangeQuery;
 
 namespace SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries
 {
-    public class DateRangeQueryElasticTranslator : ISubQueryElasticTranslator<DateRange>
+    public class DateRangeQueryElasticTranslator : ISubQueryElasticTranslator<DateRangeQuery>
     {
         public QueryContainerDescriptor<TViewModel> Translate<TViewModel>(
             IEnumerable<ISubQueryElasticTranslator> collection, ISearchSubQuery query) where TViewModel : class
         {
-            var castedQuery = (DateRange)query;
+            var castedQuery = (DateRangeQuery)query;
             var queryResult = new QueryContainerDescriptor<TViewModel>();
       
             queryResult.DateRange(x =>

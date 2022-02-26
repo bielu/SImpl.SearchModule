@@ -60,10 +60,10 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
     {
         public DateRangeQueryConfigurator()
         {
-            Query = new DateRange();
+            Query = new DateRangeQuery();
         }
 
-        public DateRange Query { get; set; }
+        public DateRangeQuery Query { get; set; }
         public DateRangeQueryConfigurator WithField(string fieldName)
         {
             Query.Field = fieldName;

@@ -36,13 +36,13 @@ namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
                     switch (booleanQuery.Occurance)
                     {
                         case Occurance.MustNot:
-                            nestedExamineQuery.Not(translator.Translate<TViewModel>(collection, booleanQuery));
+                            nestedExamineQuery.Not(translator.Translate<TViewModel>(searcher,collection, booleanQuery));
                             break;
                         case Occurance.Must:
-                            nestedExamineQuery.And(translator.Translate<TViewModel>(collection, booleanQuery));
+                            nestedExamineQuery.And(translator.Translate<TViewModel>(searcher,collection, booleanQuery));
                             break;
                         case Occurance.Should:
-                            nestedExamineQuery.Or(translator.Translate<TViewModel>(collection, booleanQuery));
+                            nestedExamineQuery.Or(translator.Translate<TViewModel>(searcher,collection, booleanQuery));
                             break;
                     }
                 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Examine;
 using Examine.Lucene.Search;
 using Examine.Search;
 using Lucene.Net.Search;
@@ -13,6 +14,7 @@ namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
 
     public interface ISubQueryElasticTranslator
     {
-        public Query Translate<TViewModel>(IEnumerable<ISubQueryElasticTranslator> collection,ISearchSubQuery query) where TViewModel : class;
+        public Query Translate<TViewModel>(ISearcher searcher, IEnumerable<ISubQueryElasticTranslator> collection,
+            ISearchSubQuery query) where TViewModel : class;
     }
 }

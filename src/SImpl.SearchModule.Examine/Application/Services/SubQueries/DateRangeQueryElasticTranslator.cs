@@ -1,50 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using Examine;
+using Examine.Lucene.Providers;
+using Examine.Lucene.Search;
+using Examine.Search;
+using Lucene.Net.Search;
 using SImpl.SearchModule.Abstraction.Queries;
-using DateRange = SImpl.SearchModule.Abstraction.Queries.subqueries.DateRange;
+using SImpl.SearchModule.Abstraction.Queries.subqueries;
+using SImpl.SearchModule.Examine.Application.LuceneEngine;
 
 namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
 {
-    public class DateRangeQueryElasticTranslator : ISubQueryElasticTranslator<DateRange>
+    public class DateRangeQueryElasticTranslator : ISubQueryElasticTranslator<DateRangeQuery>
     {
-        public QueryContainerDescriptor<TViewModel> Translate<TViewModel>(
-            IEnumerable<ISubQueryElasticTranslator> collection, ISearchSubQuery query) where TViewModel : class
+        public Query Translate<TViewModel>(ISearcher searcher, IEnumerable<ISubQueryElasticTranslator> collection,
+            ISearchSubQuery query) where TViewModel : class
         {
-            var castedQuery = (DateRange)query;
-            var queryResult = new QueryContainerDescriptor<TViewModel>();
-      
-            queryResult.DateRange(x =>
+            var searcherBase = searcher as BaseLuceneSearcher;
+            var nestedQuery = new LuceneSearchQueryWithFiltersAndFacets(searcherBase.GetSearchContext(), "baseSearch",
+                searcherBase.LuceneAnalyzer, new LuceneSearchOptions(), MapOccuranceToExamine(query.Occurance));
+            var termSubQuery = (DateRangeQuery)query;
+            nestedQuery.RangeQuery<DateTime>(
+                new[] { termSubQuery.Field },
+                termSubQuery.MinValue,
+                termSubQuery.MaxValue,
+                maxInclusive: termSubQuery.IncludeMaxEdge, minInclusive: termSubQuery.IncludeMinEdge);
+            return nestedQuery.Query;
+        }
+
+        private BooleanOperation MapOccuranceToExamine(Occurance queryOccurance)
+        {
+            switch (queryOccurance)
             {
-                var range = new DateRangeQueryDescriptor<TViewModel>();
-                if (castedQuery.IncludeMaxEdge && castedQuery.MaxValue.HasValue && (!castedQuery.MinValue.HasValue || castedQuery.MaxValue > castedQuery.MinValue))
-                {
-                    range=range.LessThanOrEquals(DateMath.Anchored(castedQuery.MaxValue.Value) );
-                }
-                else if(castedQuery.MaxValue.HasValue && (!castedQuery.MinValue.HasValue || castedQuery.MaxValue > castedQuery.MinValue))
-                {
-                    range=range.LessThan(DateMath.Anchored(castedQuery.MaxValue.Value));
-                }
-                else if(castedQuery.MaxValue.HasValue)
-                {
-                    throw new ArgumentException("Max value has to be higher than minimal value");
-                }
-                if (castedQuery.IncludeMinEdge && castedQuery.MinValue.HasValue && (!castedQuery.MaxValue.HasValue || castedQuery.MaxValue > castedQuery.MinValue))
-                {
-                    range=range.LessThanOrEquals(DateMath.Anchored(castedQuery.MaxValue.Value));
-                }
-                else if( castedQuery.MinValue.HasValue &&  (!castedQuery.MaxValue.HasValue || castedQuery.MaxValue < castedQuery.MinValue))
-                {
-                    range=range.LessThan(DateMath.Anchored(castedQuery.MaxValue.Value));
-                }
-                else if(castedQuery.MaxValue.HasValue)
-                {
-                    throw new ArgumentException("min value has to be lower than Max value");
-                }
-                return range;
-            });
- 
-            
-            return queryResult;
+                case Occurance.Should:
+                    return BooleanOperation.Or;
+                case Occurance.Must:
+                    return BooleanOperation.And;
+                case Occurance.MustNot:
+                    return BooleanOperation.Not;
+            }
+
+            return BooleanOperation.Or;
         }
     }
 }
