@@ -8,10 +8,11 @@ using Lucene.Net.Search;
 using SImpl.SearchModule.Abstraction.Queries;
 using SImpl.SearchModule.Abstraction.Queries.subqueries;
 using SImpl.SearchModule.Examine.Application.LuceneEngine;
+using LongRange = SImpl.SearchModule.Abstraction.Queries.subqueries.LongRange;
 
 namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
 {
-    public class NumericRangeQueryExamineTranslator : ISubQueryExamineTranslator<NumericRange>
+    public class LongRangeQueryExamineTranslator : ISubQueryExamineTranslator<LongRange>
     {
         public Query Translate<TViewModel>(ISearcher searcher, IEnumerable<ISubQueryElasticTranslator> collection,
             ISearchSubQuery query) where TViewModel : class
@@ -19,12 +20,12 @@ namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
             var searcherBase = searcher as BaseLuceneSearcher;
             var nestedQuery = new LuceneSearchQueryWithFiltersAndFacets(searcherBase.GetSearchContext(), "baseSearch",
                 searcherBase.LuceneAnalyzer, new LuceneSearchOptions(), MapOccuranceToExamine(query.Occurance));
-            var termSubQuery = (NumericRange)query;
+            var termSubQuery = (LongRange)query;
             if (termSubQuery.MinValue == null && termSubQuery.MaxValue == null || termSubQuery.Field == null)
             {
                 return null;
             }
-            nestedQuery.RangeQuery<int>(
+            nestedQuery.RangeQuery<long>(
                 new[] { termSubQuery.Field },
                 termSubQuery.MinValue,
                 termSubQuery.MaxValue,

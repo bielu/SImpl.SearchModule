@@ -60,7 +60,13 @@ namespace SImpl.SearchModule.Examine.Application.CommandHandlers
             foreach (var model in commandModels)
             {
                 var translatedModel = ValueSet.FromObject(model.Id, "search", model.ContentType, model);
+                IDictionary<string, IEnumerable<object>> correctedValues = new Dictionary<string, IEnumerable<object>>();
+                foreach (var valueSet in translatedModel.Values)
+                {
+                    correctedValues.Add(valueSet.Key.Substring(0,1).ToLowerInvariant() + valueSet.Key.Substring(1), valueSet.Value);
+                }
 
+                var correctedValueSet = new ValueSet(model.Id.ToString(), "search",model.ContentType, correctedValues);
                 modelList.Add(translatedModel);
             }
 

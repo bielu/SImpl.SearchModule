@@ -22,11 +22,12 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
 
         public async Task HandleAsync(ReIndexCommand command)
         {
+            //todo: move that to separete service
             var indexAlias =  _elasticSearchConfiguration.IndexPrefixName+command.Index.ToLowerInvariant();
-            var indexName = _elasticSearchConfiguration.UseZeroDowntimeIndexing
+            var indexName = (_elasticSearchConfiguration.UseZeroDowntimeIndexing
                 ? indexAlias
-                : indexAlias + DateTime.Now.ToString("-dd-MMM-HH-mm-ss");
-
+                : indexAlias + DateTime.Now.ToString("-dd-MMM-HH-mm-ss")).ToLowerInvariant();
+        
             var index = await _client.Indices.ExistsAsync(indexAlias);
 
             var answer = await _client.Indices.CreateAsync(indexName, index =>

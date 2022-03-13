@@ -31,9 +31,9 @@ namespace SImpl.SearchModule.Examine.Application.Services
 
             foreach (var booleanQuery in query)
             {
-                var type = booleanQuery.GetType();
+                var type = booleanQuery.Value.GetType();
                 var handlerType =
-                    typeof(ISubQueryElasticTranslator<>).MakeGenericType(type);
+                    typeof(ISubQueryExamineTranslator<>).MakeGenericType(type);
 
                 var translator =
                     _collection.FirstOrDefault(x => x.GetType().GetInterfaces().Any(x => x == handlerType));

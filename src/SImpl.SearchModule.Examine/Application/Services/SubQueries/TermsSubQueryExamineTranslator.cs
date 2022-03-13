@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Examine;
 using Examine.Lucene.Providers;
 using Examine.Lucene.Search;
@@ -11,20 +11,22 @@ using SImpl.SearchModule.Examine.Application.LuceneEngine;
 
 namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
 {
-    public class DateRangeQueryElasticTranslator : ISubQueryElasticTranslator<DateRangeQuery>
+    public class TermsSubQueryExamineTranslator : ISubQueryExamineTranslator<TermsSubQuery>
     {
         public Query Translate<TViewModel>(ISearcher searcher, IEnumerable<ISubQueryElasticTranslator> collection,
             ISearchSubQuery query) where TViewModel : class
         {
             var searcherBase = searcher as BaseLuceneSearcher;
+            
             var nestedQuery = new LuceneSearchQueryWithFiltersAndFacets(searcherBase.GetSearchContext(), "baseSearch",
                 searcherBase.LuceneAnalyzer, new LuceneSearchOptions(), MapOccuranceToExamine(query.Occurance));
-            var termSubQuery = (DateRangeQuery)query;
-            nestedQuery.RangeQuery<DateTime>(
-                new[] { termSubQuery.Field },
-                termSubQuery.MinValue,
-                termSubQuery.MaxValue,
-                maxInclusive: termSubQuery.IncludeMaxEdge, minInclusive: termSubQuery.IncludeMinEdge);
+            var termSubQuery = (TermsSubQuery)query;
+            if (termSubQuery.Value == null || termSubQuery.Field == null)
+            {
+                return null;
+            }
+            nestedQuery.GroupedAnd(new List<string>() { termSubQuery.Field }.ToArray(),
+                termSubQuery.Value.Select(x => x.ToString()).ToArray());
             return nestedQuery.Query;
         }
 

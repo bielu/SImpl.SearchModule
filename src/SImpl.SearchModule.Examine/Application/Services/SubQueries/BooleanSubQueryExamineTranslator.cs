@@ -11,7 +11,7 @@ using SImpl.SearchModule.Examine.Application.LuceneEngine;
 
 namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
 {
-    public class BooleanSubQueryElasticTranslator : ISubQueryElasticTranslator<BoolSearchSubQuery>
+    public class BooleanSubQueryExamineTranslator : ISubQueryExamineTranslator<BoolSearchSubQuery>
     {
       
         public Query Translate<TViewModel>(ISearcher searcher,IEnumerable<ISubQueryElasticTranslator> collection, ISearchSubQuery query) where TViewModel : class
@@ -19,13 +19,16 @@ namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
             var searcherBase = searcher as BaseLuceneSearcher;
             var nestedQuery = new LuceneSearchQueryWithFiltersAndFacets(searcherBase.GetSearchContext(),"baseSearch" ,searcherBase.LuceneAnalyzer, new LuceneSearchOptions(), MapOccuranceToExamine(query.Occurance));
             var boolQuery = (BoolSearchSubQuery)query;
-           
+            if (!boolQuery.NestedQueries.Any())
+            {
+                return null;
+            }
                 var nestedExamineQuery=nestedQuery as LuceneSearchQueryWithFiltersAndFacets;
                 foreach (var booleanQuery in boolQuery.NestedQueries)
                 {
                     var type = booleanQuery.GetType();
                     var handlerType =
-                        typeof(ISubQueryElasticTranslator<>).MakeGenericType(type);
+                        typeof(ISubQueryExamineTranslator<>).MakeGenericType(type);
 
                     var translator =
                         collection.FirstOrDefault(x => x.GetType().GetInterfaces().Any(x => x == handlerType));
@@ -47,6 +50,10 @@ namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
                     }
                 }
 
+                if (!nestedQuery.Query.Clauses.Any())
+                {
+                    return null;
+                }
                 return nestedQuery.Query;
 
         }

@@ -159,9 +159,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
                     }
                     if (query.Queries != null && query.Queries.Any())
                     {
-                    
-                            f.HighlightQuery(f => TranslateSubQuery(f,query.Queries));
-                     
+                        f.HighlightQuery(f => TranslateSubQuery(f,query.Queries));
                     }
                  
                 }

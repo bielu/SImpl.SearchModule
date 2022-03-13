@@ -7,7 +7,7 @@ using SImpl.SearchModule.Abstraction.Queries;
 
 namespace SImpl.SearchModule.Examine.Application.Services.SubQueries
 {
-    public interface ISubQueryElasticTranslator<T> : ISubQueryElasticTranslator where T : ISearchSubQuery
+    public interface ISubQueryExamineTranslator<T> : ISubQueryElasticTranslator where T : ISearchSubQuery
     {
      
     }

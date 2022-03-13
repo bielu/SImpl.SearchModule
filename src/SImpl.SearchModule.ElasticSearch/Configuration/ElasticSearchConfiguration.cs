@@ -27,21 +27,18 @@ namespace SImpl.SearchModule.ElasticSearch.Configuration
             {
                 new TextElasticProperty()
                 {
-                    Name = "Id"
+                    Name = "id"
                 },
                 new TextElasticProperty()
                 {
-                    Name ="ContentType"
+                    Name ="contentType"
                 },
                 new TextElasticProperty()
                 {
-                    Name ="ContentType"
+                    Name ="facet"
                 },   new TextElasticProperty()
                 {
-                    Name ="Facet"
-                },   new TextElasticProperty()
-                {
-                    Name ="Tags"
+                    Name ="tags"
                 },
             }}
         };

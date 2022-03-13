@@ -12,12 +12,14 @@ using SImpl.Hosts.WebHost.Modules;
 using SImpl.Modules;
 using SImpl.SearchModule.Core.Application.Services;
 using SImpl.SearchModule.Examine.Application.Factoriesz;
+using SImpl.SearchModule.Examine.Application.LuceneEngine;
 using SImpl.SearchModule.Examine.Application.Services;
 using SImpl.SearchModule.Examine.Application.Services.SubQueries;
 using SImpl.SearchModule.Examine.Configuration;
 
 namespace SImpl.SearchModule.Examine
 {
+    
     public class ExamineSearchModule : IAspNetPreModule,IHostBuilderConfigureModule, ISImplModule
     {
         public ExamineSearchModule(ExamineSearchConfiguration config)
@@ -46,14 +48,20 @@ namespace SImpl.SearchModule.Examine
             services.AddSingleton(typeof(ExamineSearchConfiguration), (services) => Config);
             services.AddTransient<IExamineQueryTranslatorService, BaseExamineQueryTranslatorService>();
             services.AddTransient<IIndexingService, IndexingService>();
+            services.AddSingleton<ConfigurationEnabledDirectoryFactory>();
             services.Scan(s =>
                 s.FromAssemblies(new List<Assembly>(){typeof(ExamineSearchModule).Assembly})
                     .AddClasses(c => c.AssignableTo(typeof(IExamineQueryTranslatorService)))
                     .AsImplementedInterfaces()
                     .WithTransientLifetime());
+            services.Scan(s =>
+                s.FromAssemblies(new List<Assembly>(){typeof(ExamineSearchModule).Assembly})
+                    .AddClasses(c => c.AssignableTo(typeof(ISubQueryExamineTranslator<>)))
+                    .AsImplementedInterfaces()
+                    .WithTransientLifetime());
             foreach (var indexName in Config.IndexName)
             {
-                services.AddExamineLuceneIndex<LuceneIndex, ConfigurationEnabledDirectoryFactory>(Config.IndexPrefixName+indexName, Config.FieldsDefinition);
+                services.AddExamineLuceneIndex<SimplExamineLuceneIndex, ConfigurationEnabledDirectoryFactory>(Config.IndexPrefixName+indexName, Config.FieldsDefinition);
 
             }
         }
