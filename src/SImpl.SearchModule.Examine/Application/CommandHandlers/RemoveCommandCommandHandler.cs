@@ -39,8 +39,10 @@ namespace SImpl.SearchModule.Examine.Application.CommandHandlers
             if (command.Models.Any())
             {
                 try
-                {
-                    examineIndex.DeleteFromIndex(command.Models.Select(x=>x.Id));
+                {   
+                    _logger.LogInformation($"Deleted items {string.Join(", ",command.Models.Select(x=>x.Id.ToString()).ToList())}");
+                examineIndex.DeleteFromIndex(command.Models.Select(x=>x.Id));
+                     
                 }
                 catch (Exception e)
                 {
@@ -50,7 +52,8 @@ namespace SImpl.SearchModule.Examine.Application.CommandHandlers
             else if (command.ModelsIds.Any())
             {
                 try
-                {
+                {       _logger.LogInformation($"Deleted items {string.Join(", ",command.ModelsIds)}");
+
                     examineIndex.DeleteFromIndex(command.ModelsIds.Select(x=>x.ToString()));
 
                 }
@@ -62,7 +65,8 @@ namespace SImpl.SearchModule.Examine.Application.CommandHandlers
             }else if (command.ModelsKeys.Any())
             {
                 try
-                {
+                {       _logger.LogInformation($"Deleted items {string.Join(", ",command.ModelsKeys)}");
+
                     examineIndex.DeleteFromIndex(command.ModelsKeys);
 
                 }

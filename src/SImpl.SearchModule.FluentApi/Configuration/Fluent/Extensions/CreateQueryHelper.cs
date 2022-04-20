@@ -39,6 +39,13 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent.Extensions
             configurator.Query.Add(configurator.Occurance, booleanQuery.Query);
             return configurator;
         }
+        public static IQueryConfigurator CreatePrefixPhraseQuery(this IQueryConfigurator configurator, Action<PrefixPhraseQueryConfigurator> query)
+        {
+            var booleanQuery = new PrefixPhraseQueryConfigurator();
+            query.Invoke(booleanQuery);
+            configurator.Query.Add(configurator.Occurance, booleanQuery.Query);
+            return configurator;
+        }
         public static IQueryConfigurator CreateNumericRangeQuery(this IQueryConfigurator configurator,
             Action<NumericRangeQueryConfigurator> query)
         {
