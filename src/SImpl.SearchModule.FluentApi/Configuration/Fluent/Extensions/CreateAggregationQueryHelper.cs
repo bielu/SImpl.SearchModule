@@ -27,13 +27,13 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent.Extensions
         {
             var booleanQuery = new T();
             query.Invoke(booleanQuery);
-            configurator.FilterFacetQuery.NestedAggregations.Add(booleanQuery);
+            configurator.FilterAggregationQuery.NestedAggregations.Add(booleanQuery);
             return configurator;
         }
         public static IAggregationConfigurator CreateSubAggregationQuery(this IAggregationConfigurator configurator,
             Action<AggregationSubQueryConfigurator> query) 
         {
-            var booleanQuery = new AggregationSubQueryConfigurator(configurator.FilterFacetQuery);
+            var booleanQuery = new AggregationSubQueryConfigurator(configurator.FilterAggregationQuery);
             query.Invoke(booleanQuery);
            
             return configurator;

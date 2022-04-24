@@ -7,13 +7,24 @@ namespace SImpl.SearchModule.FluentApi.Configuration
 {
     public class FluentApiSearchQueryCreator : IFluentApiSearchQueryCreator
     {
-        private readonly ISearchQuery<IQueryResult> _baseQuery;
+        private  ISearchQuery<IQueryResult> _baseQuery { get; set; }
 
         public FluentApiSearchQueryCreator(ISearchQuery<IQueryResult> baseQuery)
         {
             _baseQuery = baseQuery;
         }
+        public FluentApiSearchQueryCreator()
+        {
+          
+        }
 
+        public FluentApiSearchQueryCreator WithSearchQuery(Action<QueryCreatorConfigurator> configurator)
+        {
+            var query = new QueryCreatorConfigurator(new SearchQuery());
+            configurator.Invoke(query);
+          _baseQuery =   query.Query;
+          return this;
+        }
         public ISearchQuery<IQueryResult> CreateSearchQuery(Action<IBaseQueryConfigurator> configurator)
         {
             var newQuery = new FluentQueryConfigurator(_baseQuery);

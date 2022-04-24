@@ -10,7 +10,7 @@ namespace SImpl.SearchModule.Abstraction.Queries
 
        
     }
-    //todo: implement missing fields
+  
     public class SimpleTerm
     {
         public string TermFieldName { get; set; }

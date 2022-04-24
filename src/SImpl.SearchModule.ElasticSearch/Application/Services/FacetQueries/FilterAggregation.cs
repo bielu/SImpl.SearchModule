@@ -9,12 +9,12 @@ using TermAggregation = SImpl.SearchModule.Abstraction.Queries.TermAggregation;
 
 namespace SImpl.SearchModule.ElasticSearch.Application.Services
 {
-    public class FilterAggregation : IFacetElasticTranslator<FilterFacetQuery>
+    public class FilterAggregation : IFacetElasticTranslator<FilterAggregationQuery>
     {
     
         public IBucketAggregation PrepareAggregation( IAggregationQuery facetField, IEnumerable<ISubQueryElasticTranslator> collection  )
         {
-            var termFacet = facetField as FilterFacetQuery;
+            var termFacet = facetField as FilterAggregationQuery;
             var term = new FilterAggregationDescriptor<ISearchModel>();
             term.Filter(f =>
             {

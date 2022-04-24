@@ -1,5 +1,6 @@
 ﻿using System;
 using SImpl.SearchModule.Abstraction.Queries;
+using SImpl.SearchModule.Abstraction.Queries.subqueries;
 using SImpl.SearchModule.Abstraction.Results;
 
 namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
@@ -13,14 +14,27 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
             _configuratorQuery = configuratorQuery;
         }
 
-        public AggregationQueryConfigurator CreateFilterQuery(Action<FilterFacetQueryConfigurator> query)
+        public AggregationQueryConfigurator CreateFilterQuery(Action<FilterAggregationQueryConfigurator> query)
         {
-            var configurator = new FilterFacetQueryConfigurator(new FilterFacetQuery());
+            var configurator = new FilterAggregationQueryConfigurator(new FilterAggregationQuery());
             query.Invoke(configurator);
-            _configuratorQuery.FacetQueries.Add(configurator.FilterFacetQuery);
+            _configuratorQuery.FacetQueries.Add(configurator.FilterAggregationQuery);
             return this;
         }
-
+        public AggregationQueryConfigurator CreateTermQuery(Action<TermAggregationQueryConfigurator> query)
+        {
+            var configurator = new TermAggregationQueryConfigurator();
+            query.Invoke(configurator);
+            _configuratorQuery.FacetQueries.Add(configurator.Query);
+            return this;
+        }
+        public AggregationQueryConfigurator CreateMultiTermQuery(Action<TermAggregationQueryConfigurator> query)
+        {
+            var configurator = new TermAggregationQueryConfigurator();
+            query.Invoke(configurator);
+            _configuratorQuery.FacetQueries.Add(configurator.Query);
+            return this;
+        }
         
     }
 }

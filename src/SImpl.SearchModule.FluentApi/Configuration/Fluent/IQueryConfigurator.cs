@@ -4,7 +4,7 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
 {
     public interface IAggregationConfigurator : IQueryConfigurator
     {
-        public FilterFacetQuery FilterFacetQuery { get; }
+        public FilterAggregationQuery FilterAggregationQuery { get; }
     }
     public interface IQueryConfigurator
     {

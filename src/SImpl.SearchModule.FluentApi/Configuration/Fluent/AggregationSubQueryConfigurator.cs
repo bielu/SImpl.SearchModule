@@ -12,11 +12,11 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent
             _configuratorQuery = configuratorQuery;
         }
 
-        public AggregationSubQueryConfigurator CreateFilterQuery(Action<FilterFacetQueryConfigurator> query)
+        public AggregationSubQueryConfigurator CreateFilterQuery(Action<FilterAggregationQueryConfigurator> query)
         {
-            var configurator = new FilterFacetQueryConfigurator(new FilterFacetQuery());
+            var configurator = new FilterAggregationQueryConfigurator(new FilterAggregationQuery());
             query.Invoke(configurator);
-            _configuratorQuery.NestedAggregations.Add(configurator.FilterFacetQuery);
+            _configuratorQuery.NestedAggregations.Add(configurator.FilterAggregationQuery);
             return this;
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Simpl.SearchModule.TestApi.Models
 {
@@ -20,5 +21,11 @@ namespace Simpl.SearchModule.TestApi.Models
         public IEnumerable<string> ContentTypes { get; set; } = (IEnumerable<string>) new List<string>();
 
         public int Sort { get; set; } = 0;
+        public IEnumerable<BasicFilter> Filters { get; set; } = (IEnumerable<BasicFilter>) new List<BasicFilter>();
+
+        public IEnumerable<BasicFilter> PreFilters { get; set; } = (IEnumerable<BasicFilter>) new List<BasicFilter>();
+
+        public IEnumerable<BasicFacet> Facets { get; set; } = (IEnumerable<BasicFacet>) new List<BasicFacet>();
+
     }
 }

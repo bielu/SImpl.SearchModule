@@ -2,7 +2,7 @@
 
 namespace SImpl.SearchModule.Abstraction.Queries
 {
-    public class FilterFacetQuery : IAggregationQuery
+    public class FilterAggregationQuery : IAggregationQuery
     {
         public string AggregationName { get; set; }
         public List<IAggregationQuery> NestedAggregations { get; set; } = new List<IAggregationQuery>();
