@@ -6,6 +6,6 @@
         public int BoostValue { get; set; }
         public string Field { get; set; }
         public object Value { get; set; }
-    
+        public int? Limit { get; set; } = 5000;
     }
 }

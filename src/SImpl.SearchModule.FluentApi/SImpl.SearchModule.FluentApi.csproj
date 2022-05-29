@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\SImpl.SearchModule.Abstraction\SImpl.SearchModule.Abstraction.csproj" />
-      <ProjectReference Include="..\SImpl.SearchModule.ElasticSearch\SImpl.SearchModule.ElasticSearch.csproj" />
     </ItemGroup>
 
 </Project>
