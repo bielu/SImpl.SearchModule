@@ -15,6 +15,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
             var term = new TermsAggregationDescriptor<ISearchModel>();
             var termFacet = facetField as TermAggregation;
             term.Field(termFacet.TermFieldName);
+            term.Size()
             return term;
         }
 

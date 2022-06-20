@@ -6,5 +6,6 @@ namespace SImpl.SearchModule.Abstraction.Queries
     {
         string AggregationName { get; set; }
         public List<IAggregationQuery> NestedAggregations{ get; set; }
+        int Size { get; set; }
     }
 }
