@@ -17,7 +17,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
             var term = new MultiTermsAggregationDescriptor<ISearchModel>();
             var termFacet = facetField as TermAggregation;
             term.Terms(multiTermAggreation.Terms.Select(x =>
-                new Func<TermDescriptor<ISearchModel>, ITerm>(e => e.Field(x.TermFieldName))));
+                new Func<TermDescriptor<ISearchModel>, ITerm>(e => e.Field(x.TermFieldName)))).Size(1000);
             return term;
         }
 
