@@ -84,7 +84,14 @@ namespace SImpl.SearchModule.FluentApi.Configuration.Fluent.Extensions
             configurator.Query.Add(configurator.Occurance, booleanQuery.Query);
             return configurator;
         }
-
+        public static IQueryConfigurator CreateGoeDistanceQuery(this IQueryConfigurator configurator,
+            Action<SpatialQueryConfigurator> query)
+        {
+            var booleanQuery = new SpatialQueryConfigurator();
+            query.Invoke(booleanQuery);
+            configurator.Query.Add(configurator.Occurance, booleanQuery.Query);
+            return configurator;
+        }
         public static IBaseQueryConfigurator CreateTermQuery(this IBaseQueryConfigurator configurator,
             Action<TermQueryConfigurator> query)
         {

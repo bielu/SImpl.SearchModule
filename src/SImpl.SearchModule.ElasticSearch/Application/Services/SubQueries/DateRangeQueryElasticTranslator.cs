@@ -17,6 +17,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries
             queryResult.DateRange(x =>
             {
                 var range = new DateRangeQueryDescriptor<TViewModel>();
+                range= range.Field( new Field(castedQuery.Field));
                 if (castedQuery.IncludeMaxEdge && castedQuery.MaxValue.HasValue && (!castedQuery.MinValue.HasValue || castedQuery.MaxValue > castedQuery.MinValue))
                 {
                     range=range.LessThanOrEquals(DateMath.Anchored(castedQuery.MaxValue.Value) );
