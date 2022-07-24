@@ -5,7 +5,7 @@ namespace SImpl.SearchModule.Abstraction.Queries.subqueries
     public class TermsSubQuery : ISearchSubQuery
     {
         public Occurance Occurance { get; set; }
-        public int BoostValue { get; set; }
+        public int BoostValue { get; set; } = 1;
         public string Field { get; set; }
         public List<object> Value { get; set; }
     }

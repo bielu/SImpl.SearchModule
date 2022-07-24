@@ -19,7 +19,6 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services
             term.Filter(f =>
             {
                 SearchDescriptor<ISearchModel> translated = new SearchDescriptor<ISearchModel>();
-
                 var queryContainer = new BoolQueryDescriptor<ISearchModel>();
                 var mustQueries = new List<QueryContainer>();
                 var shouldQueries = new List<QueryContainer>();

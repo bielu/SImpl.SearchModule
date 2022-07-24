@@ -16,6 +16,7 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries
             queryResult.TermRange(x =>
             {
                 var range = new TermRangeQueryDescriptor<TViewModel>();
+                range= range.Field( new Field(castedQuery.Field));
                 if (castedQuery.IncludeMaxEdge && castedQuery.MaxValue != null)
                 {
                     range=range.LessThanOrEquals(castedQuery.MaxValue);
