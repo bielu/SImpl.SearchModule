@@ -66,5 +66,7 @@ namespace SImpl.SearchModule.ElasticSearch.Configuration
 
             return this;
         }
+
+        public Type SearchService { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Examine;
 using Examine.Lucene.Providers;
@@ -47,7 +48,8 @@ namespace SImpl.SearchModule.Examine
         {
             services.AddSingleton(typeof(ExamineSearchConfiguration), (services) => Config);
             services.AddTransient<IExamineQueryTranslatorService, BaseExamineQueryTranslatorService>();
-            services.AddTransient<IIndexingService, IndexingService>();
+            services.AddTransient(typeof(IIndexingService),
+                Config.SearchService);
             services.AddSingleton<ConfigurationEnabledDirectoryFactory>();
             services.Scan(s =>
                 s.FromAssemblies(new List<Assembly>(){typeof(ExamineSearchModule).Assembly})
