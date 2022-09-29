@@ -2,6 +2,7 @@
 using Examine;
 using Examine.Lucene.Directories;
 using J2N.Collections.Generic;
+using SImpl.SearchModule.Core.Application.Services;
 
 namespace SImpl.SearchModule.Examine.Configuration
 {
@@ -13,6 +14,6 @@ namespace SImpl.SearchModule.Examine.Configuration
         public Type LuceneDirectoryFactory { get; set; } = typeof(SyncedFileSystemDirectoryFactory);
         public FieldDefinitionCollection FieldsDefinition { get; set; }
         public bool EnableDebugInformation { get; set; }
-        public Type SearchService { get; set; }
+        public Type SearchService { get; set; } = typeof(IndexingService);
     }
 }

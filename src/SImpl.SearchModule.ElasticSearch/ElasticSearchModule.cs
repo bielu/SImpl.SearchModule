@@ -46,7 +46,7 @@ namespace SImpl.SearchModule.ElasticSearch
             services.AddTransient(typeof(IElasticClient), provider => provider.GetService<IElasticSearchClientFactory>().CreateClient());
             services.AddTransient<IElasticSearchQueryTranslatorService, BaseElasticSearchQueryTranslatorService>();
             services.AddTransient(typeof(IIndexingService),
-                Config.SearchService);
+                Config.IndexingService);
             services.Scan(s =>
                 s.FromAssemblies(new List<Assembly>(){typeof(ElasticSearchModule).Assembly})
                     .AddClasses(c => c.AssignableTo(typeof(ISubQueryElasticTranslator<>)))
