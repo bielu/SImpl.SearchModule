@@ -13,5 +13,6 @@ namespace SImpl.SearchModule.Examine.Configuration
         public Type LuceneDirectoryFactory { get; set; } = typeof(SyncedFileSystemDirectoryFactory);
         public FieldDefinitionCollection FieldsDefinition { get; set; }
         public bool EnableDebugInformation { get; set; }
+        public Type SearchService { get; set; }
     }
 }
