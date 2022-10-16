@@ -35,6 +35,19 @@ namespace Simpl.SearchModule.TestApi.Controllers
         {
             try
             {
+                var multiSearchQuery = new FluentApiMultiSearchQueryCreator().CreateSearchQuery("test", f =>
+                {
+                    f.WithIndex("test")
+                }, query =>
+                {
+                    query.CreateAggregationQuery(f =>
+                    {
+                           
+                        f.CreateFilterQuery();
+                        f.CreateTermQuery(x=>x.WithName().WithField())
+                    })
+                    query.CreateBoolQuery()
+                });
                 var query = new FluentApiSearchQueryCreator(new SearchQuery()
                     {
                         Index = "headlesssearchindex",
