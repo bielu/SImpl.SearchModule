@@ -13,6 +13,7 @@ using SImpl.Modules;
 using SImpl.SearchModule.Abstraction.Queries;
 using SImpl.SearchModule.Core.Application.Services;
 using SImpl.SearchModule.ElasticSearch.Application.Services;
+using SImpl.SearchModule.ElasticSearch.Application.Services.MultiSearch;
 using SImpl.SearchModule.ElasticSearch.Application.Services.Result;
 using SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries;
 using SImpl.SearchModule.ElasticSearch.Configuration;
@@ -45,6 +46,7 @@ namespace SImpl.SearchModule.ElasticSearch
             services.AddTransient(typeof(IElasticSearchClientFactory), typeof(ElasticSearchClientFactory));
             services.AddTransient(typeof(IElasticClient), provider => provider.GetService<IElasticSearchClientFactory>().CreateClient());
             services.AddTransient<IElasticSearchQueryTranslatorService, BaseElasticSearchQueryTranslatorService>();
+            services.AddTransient<IElasticSearchMultiQueryTranslatorService, ElasticSearchMultiQueryTranslatorService>();
             services.AddTransient(typeof(IIndexingService),
                 Config.SearchService);
             services.Scan(s =>
