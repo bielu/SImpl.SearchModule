@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>False</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Algolia.Search" Version="6.13.0" />
+      <PackageReference Include="SImpl.CQRS.Commands" Version="1.0.36" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SImpl.SearchModule.Abstraction\SImpl.SearchModule.Abstraction.csproj" />
+    </ItemGroup>
+
+</Project>
