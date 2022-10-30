@@ -1,8 +1,7 @@
 # File: azure-pipelines.yml
-trigger:
- branches:
-    include:
-      - '*'
+trigger: none 
+pr: 
+- '*'
 stages:
 - stage: Build
   displayName: 'Build'
@@ -10,6 +9,7 @@ stages:
   - template: ../Actions/build.yml
     parameters:
       agentPool: "Azure Pipelines"
+      PackageSuffix: "Pr"
 - stage: Analyse
   displayName: 'Analyse'
   jobs:
