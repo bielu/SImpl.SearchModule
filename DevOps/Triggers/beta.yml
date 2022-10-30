@@ -1,0 +1,9 @@
+# File: azure-pipelines.yml
+trigger:
+ branches:
+    include:
+      - main
+      - v*/beta
+pr: none
+extends:
+# File: azure-pipelines.yml
