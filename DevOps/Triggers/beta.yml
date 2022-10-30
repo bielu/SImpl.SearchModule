@@ -2,13 +2,8 @@
 trigger:
  branches:
     include:
-      - '*'
-stages:
-  - stage: Build
-    displayName: 'Build'
-    jobs:
-      - template: Actions/build.yml
-  - stage: Analyse
-    displayName: 'Analyse'
-    jobs:
-      - template: Actions/analise.yml    
+      - main
+      - v*/beta
+pr: none
+extends:
+# File: azure-pipelines.yml
