@@ -1,0 +1,13 @@
+parameters:
+- name: NugetFeedCredentials
+  type: string
+  default: ''
+steps:
+  - task: NuGetCommand@2
+    displayName: Push to feed of  ${{parameters.NugetFeedCredentials}}
+    condition: ne( '${{ parameters.NugetFeedCredentials }}', '') 
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Pipeline.Workspace)/publish artifacts/**/*.nupkg'
+      nuGetFeedType: 'external'
+      publishFeedCredentials: '${{parameters.NugetFeedCredentials}}'
