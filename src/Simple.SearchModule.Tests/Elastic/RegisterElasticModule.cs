@@ -19,8 +19,9 @@ namespace Simple.SearchModule.Tests.Elastic
         {
             Assert.Equal(true, true);
         }
-        [Fact]
-        /*public void CanRetrieveConfiguration()
+        
+        /*[Fact]
+         public void CanRetrieveConfiguration()
         {
             using (var scope = _factory.Server.Host.Services.CreateScope())
             {
