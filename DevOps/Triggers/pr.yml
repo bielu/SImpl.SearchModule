@@ -1,0 +1,11 @@
+# File: azure-pipelines.yml
+trigger:
+ branches:
+    include:
+      - v1-master
+      - v2/master
+      - v3/master
+      - v4/master
+pr: none
+extends:
+# File: toprepare PR checks
