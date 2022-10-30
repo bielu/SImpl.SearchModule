@@ -8,6 +8,8 @@ stages:
   displayName: 'Build'
   jobs:
   - template: ../Actions/build.yml
+    parameters:
+      agentPool: "Azure Pipelines"
 - stage: Analyse
   displayName: 'Analyse'
   jobs:

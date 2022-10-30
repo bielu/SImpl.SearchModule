@@ -18,8 +18,6 @@ jobs:
 - job: Build
   pool: 
     name: '${{parameters.agentPool}}'
-    demands:
-      Agent.OS -equals Windows_NT
   steps:
   - checkout: self
     persistCredentials: true
