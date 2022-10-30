@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using SImpl.SearchModule.Core.Application.Services;
 using SImpl.SearchModule.ElasticSearch.Configuration;
+using SImpl.SearchModule.ElasticSearch.Models;
 using Xunit;
 
 namespace Simple.SearchModule.Tests.Elastic
@@ -38,6 +40,19 @@ namespace Simple.SearchModule.Tests.Elastic
         public async Task DefaultIsCommandIndexService()
         {
             Assert.Equal(typeof(IndexingService), fluentApi.SearchService);
+        }
+        [Fact]
+        public async Task CanSetupCustomKeywordPropertyMapping()
+        {
+            string propertyName = "myproperty";
+            fluentApi.MapProperty(AnalyzerType.Keyword, new TextElasticProperty()
+            {
+                Name = propertyName
+            });
+            Assert.Equal(true, fluentApi.ElasticPropertiesFields.ContainsKey(AnalyzerType.Keyword));
+
+            var keywordProperties = fluentApi.ElasticPropertiesFields[AnalyzerType.Keyword];
+            Assert.Equal(true, keywordProperties.Any(x=>x.Name == propertyName));
         }
     }
 }
