@@ -50,7 +50,7 @@ jobs:
             [xml]$xml.Save("$(System.DefaultWorkingDirectory)\version.props")
         }
         cd $(Build.SourcesDirectory)
-        git config --global user.email "nuggetintegration@novicell.dk"
+        git config --global user.email "bielu@bielu.pl"
         git config --global user.name "DEVOPS" 
         git tag -a $version -m 'tag message'
         git push --tags -q
