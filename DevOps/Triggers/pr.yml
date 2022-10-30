@@ -4,11 +4,11 @@ trigger:
     include:
       - '*'
 stages:
-  - stage: Build
-    displayName: 'Build'
-    jobs:
-      - template: ../Actions/build.yml
-  - stage: Analyse
-    displayName: 'Analyse'
-    jobs:
-      - template: ../Actions/analise.yml    
+- stage: Build
+  displayName: 'Build'
+  jobs:
+  - template: ../Actions/build.yml
+- stage: Analyse
+  displayName: 'Analyse'
+  jobs:
+  - template: ../Actions/analise.yml    
