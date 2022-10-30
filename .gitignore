@@ -351,3 +351,4 @@ MigrationBackup/
 src/SImpl.SearchModule/.idea
 src/.idea
 nugettest/ReleaseNugets.ps1
+**/MyCoverage
