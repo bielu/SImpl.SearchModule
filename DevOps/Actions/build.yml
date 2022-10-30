@@ -33,19 +33,19 @@ jobs:
       command: 'restore'
       projects: '**/*.csproj'
       feedsToUse: 'config'
-      nugetConfigPath: '$(System.DefaultWorkingDirectory)\DevOps\NuGetCI.config'
+      nugetConfigPath: '$(System.DefaultWorkingDirectory)/DevOps/NuGetCI.config'
       externalFeedCredentials: 'Nuget'
   - task: PowerShell@2
     inputs:
       targetType: 'inline'
       script: |
-        [xml]$xml = Get-Content -path  "$(System.DefaultWorkingDirectory)\version.props" -Raw
+        [xml]$xml = Get-Content -path  "$(System.DefaultWorkingDirectory)/version.props" -Raw
         $version = $xml.Project.PropertyGroup.VersionPrefix;
         $suffix = "${{parameters.PackageSuffix}}";
         if(![string]::IsNullOrEmpty($suffix)){
           $version= $version+"-"+$suffix+"."+$Env:BUILD_BUILDID
           $xml.Project.PropertyGroup.VersionSuffix = $suffix+"."+$Env:BUILD_BUILDID
-            [xml]$xml.Save("$(System.DefaultWorkingDirectory)\version.props")
+            [xml]$xml.Save("$(System.DefaultWorkingDirectory)/version.props")
         }
         cd $(Build.SourcesDirectory)
         git config --global user.email "bielu@bielu.pl"
