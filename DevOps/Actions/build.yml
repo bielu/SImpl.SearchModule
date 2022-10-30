@@ -14,62 +14,59 @@ parameters:
 - name: sdkVersion
   type: string
   default: '5.0.400'
-stages:
-- stage: build
-  displayName: Build
-  jobs:
-  - job: Build
-    pool: 
-      name: '${{parameters.agentPool}}'
-      demands:
-        Agent.OS -equals Windows_NT
-    steps:
-    - checkout: self
-      persistCredentials: true
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk'
-      inputs:
-        packageType: sdk
-        version: '${{parameters.sdkVersion}}'
-        installationPath: $(Agent.ToolsDirectory)/dotnet
-    - task: DotNetCoreCLI@2
-      displayName: Restore packages
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
-        feedsToUse: 'config'
-        nugetConfigPath: '$(System.DefaultWorkingDirectory)\DevOps\NuGetCI.config'
-        externalFeedCredentials: 'Nuget'
-    - task: PowerShell@2
-      inputs:
-        targetType: 'inline'
-        script: |
-          [xml]$xml = Get-Content -path  "$(System.DefaultWorkingDirectory)\version.props" -Raw
-          $version = $xml.Project.PropertyGroup.VersionPrefix;
-          $suffix = "${{parameters.PackageSuffix}}";
-          if(![string]::IsNullOrEmpty($suffix)){
-            $version= $version+"-"+$suffix+"."+$Env:BUILD_BUILDID
-            $xml.Project.PropertyGroup.VersionSuffix = $suffix+"."+$Env:BUILD_BUILDID
-             [xml]$xml.Save("$(System.DefaultWorkingDirectory)\version.props")
-          }
-          cd $(Build.SourcesDirectory)
-          git config --global user.email "nuggetintegration@novicell.dk"
-          git config --global user.name "DEVOPS" 
-          git tag -a $version -m 'tag message'
-          git push --tags -q
-          Write-Host "##vso[build.updatebuildnumber]$version"
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'custom'
-        custom: 'pack'
-        projects: '**/*.csproj'
-        includesymbols: false
-        includesource: true
-        versioningScheme: 'off'
-        arguments: '--no-restore --output=$(Build.ArtifactStagingDirectory)'
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'publish artifacts'
-        publishLocation: 'Container'
+jobs:
+- job: Build
+  pool: 
+    name: '${{parameters.agentPool}}'
+    demands:
+      Agent.OS -equals Windows_NT
+  steps:
+  - checkout: self
+    persistCredentials: true
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      packageType: sdk
+      version: '${{parameters.sdkVersion}}'
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+  - task: DotNetCoreCLI@2
+    displayName: Restore packages
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
+      feedsToUse: 'config'
+      nugetConfigPath: '$(System.DefaultWorkingDirectory)\DevOps\NuGetCI.config'
+      externalFeedCredentials: 'Nuget'
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        [xml]$xml = Get-Content -path  "$(System.DefaultWorkingDirectory)\version.props" -Raw
+        $version = $xml.Project.PropertyGroup.VersionPrefix;
+        $suffix = "${{parameters.PackageSuffix}}";
+        if(![string]::IsNullOrEmpty($suffix)){
+          $version= $version+"-"+$suffix+"."+$Env:BUILD_BUILDID
+          $xml.Project.PropertyGroup.VersionSuffix = $suffix+"."+$Env:BUILD_BUILDID
+            [xml]$xml.Save("$(System.DefaultWorkingDirectory)\version.props")
+        }
+        cd $(Build.SourcesDirectory)
+        git config --global user.email "nuggetintegration@novicell.dk"
+        git config --global user.name "DEVOPS" 
+        git tag -a $version -m 'tag message'
+        git push --tags -q
+        Write-Host "##vso[build.updatebuildnumber]$version"
+      workingDirectory: '$(System.DefaultWorkingDirectory)'
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'custom'
+      custom: 'pack'
+      projects: '**/*.csproj'
+      includesymbols: false
+      includesource: true
+      versioningScheme: 'off'
+      arguments: '--no-restore --output=$(Build.ArtifactStagingDirectory)'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'publish artifacts'
+      publishLocation: 'Container'
