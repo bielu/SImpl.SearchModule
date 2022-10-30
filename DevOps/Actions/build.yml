@@ -34,7 +34,6 @@ jobs:
       projects: '**/*.csproj'
       feedsToUse: 'config'
       nugetConfigPath: '$(System.DefaultWorkingDirectory)/DevOps/NuGetCI.config'
-      externalFeedCredentials: 'Nuget'
   - task: PowerShell@2
     inputs:
       targetType: 'inline'
