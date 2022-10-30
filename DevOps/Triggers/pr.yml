@@ -7,8 +7,8 @@ stages:
   - stage: Build
     displayName: 'Build'
     jobs:
-      - template: Actions/build.yml
+      - template: ../Actions/build.yml
   - stage: Analyse
     displayName: 'Analyse'
     jobs:
-      - template: Actions/analise.yml    
+      - template: ../Actions/analise.yml    
