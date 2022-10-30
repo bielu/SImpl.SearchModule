@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Elasticsearch.Net;
 using Nest;
+using SImpl.SearchModule.Core.Application.Services;
 using SImpl.SearchModule.ElasticSearch.Application.Services;
 using SImpl.SearchModule.ElasticSearch.Models;
 
@@ -67,6 +68,6 @@ namespace SImpl.SearchModule.ElasticSearch.Configuration
             return this;
         }
 
-        public Type SearchService { get; set; }
+        public Type SearchService { get; set; } = typeof(IndexingService);
     }
 }
