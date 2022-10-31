@@ -12,7 +12,6 @@ stages:
   - template: ../Actions/build.yml
     parameters:
       agentPool: "Azure Pipelines"
-      PackageSuffix: "Beta"
 - stage: Deploy
   displayName: 'Deploy'
   jobs:
