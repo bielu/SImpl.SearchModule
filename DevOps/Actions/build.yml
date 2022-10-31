@@ -13,7 +13,7 @@ parameters:
   default: ''
 - name: sdkVersion
   type: string
-  default: '5.0.400'
+  default: '6.0.300'
 jobs:
 - job: Build
   pool: 
