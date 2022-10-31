@@ -5,5 +5,18 @@ trigger:
       - main
       - v*/beta
 pr: none
-extends:
-# File: azure-pipelines.yml
+stages:
+- stage: Build
+  displayName: 'Build'
+  jobs:
+  - template: ../Actions/build.yml
+    parameters:
+      agentPool: "Azure Pipelines"
+      PackageSuffix: "Beta"
+- stage: Deploy
+  displayName: 'Deploy'
+  jobs:
+  - template: ../Actions/deploy.yml
+    parameters:
+      agentPool: "Azure Pipelines"
+      nugetFeed: "NuGet"
