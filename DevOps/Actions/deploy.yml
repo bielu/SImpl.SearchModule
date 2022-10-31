@@ -1,0 +1,24 @@
+parameters:
+- name: agentPool
+  type: string
+  default: ''
+- name: nugetFeed
+  type: string
+  default: ''
+  
+jobs:
+- job: Deploy
+  pool: 
+    name: '${{parameters.agentPool}}'
+  steps:
+  - task: DeleteFiles@1
+    inputs:
+      SourceFolder: '$(Pipeline.Workspace)/publish artifacts/'
+      Contents: '**/*'
+      RemoveSourceFolder: true
+  - download: current
+    artifact: 'publish artifacts'
+  - task: NuGetToolInstaller@1
+  - template: ./push.yml
+    parameters:
+        NugetFeedCredentials: '${{parameters.nugetFeed}}'
