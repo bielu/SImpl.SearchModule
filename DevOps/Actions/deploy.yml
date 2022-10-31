@@ -19,6 +19,6 @@ jobs:
   - download: current
     artifact: 'publish artifacts'
   - task: NuGetToolInstaller@1
-  - template: ../push.yml
+  - template: ./push.yml
     parameters:
         NugetFeedCredentials: '${{parameters.nugetFeed}}'
