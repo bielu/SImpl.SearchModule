@@ -86,14 +86,12 @@ namespace SImpl.SearchModule.Core.Application.Services
         public void Delete(List<Guid> searchModels, string index)
         {
         var indexAlias =_elasticSearchConfiguration.IndexPrefixName + index.ToLowerInvariant();
-            var indexName = ( _elasticSearchConfiguration.UseZeroDowntimeIndexing
-                ? indexAlias
-                : indexAlias + DateTime.Now.ToString("-dd-MMM-HH-mm-ss"));
+ 
 
             var indexDef =  _client.Indices.Exists(indexAlias);
             if (!indexDef.Exists)
             {
-                var answer = _client.Indices.Create(indexName, index =>
+                var answer = _client.Indices.Create(indexAlias, index =>
                 {
                     if (_elasticSearchConfiguration.UseZeroDowntimeIndexing)
                     {
@@ -120,26 +118,35 @@ namespace SImpl.SearchModule.Core.Application.Services
 
         public void Delete(List<string> searchModels, string index)
         {
-            var answerIndex=  _client.Bulk(x => 
-                x.DeleteMany<ElasticSearchModel>(searchModels.Select(x=>new ElasticSearchModel()
-                    {
-                        Id = x
-                    })
-                    .ToList(), (bulkDes, record) => bulkDes
-                    .Index(index)
-                    .Document(record)));
-            if (answerIndex.Errors)
+            var indexName =_elasticSearchConfiguration.IndexPrefixName + index.ToLowerInvariant();
+        ;
+
+            var indexDef =  _client.Indices.Exists(indexName);
+            if (!indexDef.Exists)
             {
-                throw new Exception(answerIndex.DebugInformation);
-            } 
+                var answerIndex = _client.Bulk(x =>
+                    x.DeleteMany<ElasticSearchModel>(searchModels.Select(x => new ElasticSearchModel()
+                        {
+                            Id = x
+                        })
+                        .ToList(), (bulkDes, record) => bulkDes
+                        .Index(index)
+                        .Document(record)));
+                if (answerIndex.Errors)
+                {
+                    throw new Exception(answerIndex.DebugInformation);
+                }
+            }
         }
 
         public void Delete(List<ISearchModel> searchModels, string index)
         {
+            var indexAlias =_elasticSearchConfiguration.IndexPrefixName + index.ToLowerInvariant();
+     
             var answerIndex=  _client.Bulk(x => 
                 x.DeleteMany<ElasticSearchModel>(searchModels.Select(ElasticSearchModelMapper.Map)
                     .ToList(), (bulkDes, record) => bulkDes
-                    .Index(index)
+                    .Index(indexAlias)
                     .Document(record)));
             if (answerIndex.Errors)
             {

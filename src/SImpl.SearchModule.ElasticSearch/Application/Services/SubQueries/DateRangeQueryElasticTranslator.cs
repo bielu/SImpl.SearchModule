@@ -18,11 +18,11 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries
             {
                 var range = new DateRangeQueryDescriptor<TViewModel>();
                 range= range.Field( new Field(castedQuery.Field));
-                if (castedQuery.IncludeMaxEdge && castedQuery.MaxValue.HasValue && (!castedQuery.MinValue.HasValue || castedQuery.MaxValue > castedQuery.MinValue))
+                if (castedQuery.IncludeMaxEdge && castedQuery.MaxValue.HasValue && (!castedQuery.MinValue.HasValue || castedQuery.MaxValue.Value > castedQuery.MinValue.Value))
                 {
                     range=range.LessThanOrEquals(DateMath.Anchored(castedQuery.MaxValue.Value) );
                 }
-                else if(castedQuery.MaxValue.HasValue && (!castedQuery.MinValue.HasValue || castedQuery.MaxValue > castedQuery.MinValue))
+                else if(castedQuery.MaxValue.HasValue && (!castedQuery.MinValue.HasValue || castedQuery.MaxValue.Value > castedQuery.MinValue.Value))
                 {
                     range=range.LessThan(DateMath.Anchored(castedQuery.MaxValue.Value));
                 }
@@ -30,13 +30,13 @@ namespace SImpl.SearchModule.ElasticSearch.Application.Services.SubQueries
                 {
                     throw new ArgumentException("Max value has to be higher than minimal value");
                 }
-                if (castedQuery.IncludeMinEdge && castedQuery.MinValue.HasValue && (!castedQuery.MaxValue.HasValue || castedQuery.MaxValue > castedQuery.MinValue))
+                if (castedQuery.IncludeMinEdge && castedQuery.MinValue.HasValue && (!castedQuery.MaxValue.HasValue || castedQuery.MaxValue.Value > castedQuery.MinValue.Value))
                 {
-                    range=range.LessThanOrEquals(DateMath.Anchored(castedQuery.MaxValue.Value));
+                    range=range.GreaterThanOrEquals(DateMath.Anchored(castedQuery.MinValue.Value));
                 }
-                else if( castedQuery.MinValue.HasValue &&  (!castedQuery.MaxValue.HasValue || castedQuery.MaxValue < castedQuery.MinValue))
+                else if( castedQuery.MinValue.HasValue &&  (!castedQuery.MaxValue.HasValue || castedQuery.MaxValue.Value > castedQuery.MinValue.Value))
                 {
-                    range=range.LessThan(DateMath.Anchored(castedQuery.MaxValue.Value));
+                    range=range.GreaterThan(DateMath.Anchored(castedQuery.MinValue.Value));
                 }
                 else if(castedQuery.MaxValue.HasValue)
                 {
