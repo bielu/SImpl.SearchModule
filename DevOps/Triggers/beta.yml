@@ -2,7 +2,6 @@
 trigger:
  branches:
     include:
-      - main
       - v*/beta
 pr: none
 stages:
