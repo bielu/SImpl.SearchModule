@@ -2,7 +2,7 @@ parameters:
 - name: agentPool
   type: string
   default: ''
-- name: agentPool
+- name: nugetFeed
   type: string
   default: ''
   
