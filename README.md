@@ -2,12 +2,12 @@
 
 | Package name                     | Dependencies                                                | Version                                               |
 | -------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------- |
-| SImpl.SearchModule.Abstraction   | SImpl Stack (Details: https://github.com/K3llr/SImpl.Stack) | Released version: soon<br/>Pre-released version: soon |
-| SImpl.SearchModule.Client        | SImpl.SearchModule.Abstraction<br/>SImpl.SearchModule.Core  | Released version: soon<br/>Pre-released version: soon |
-| SImpl.SearchModule.Core          | SImpl.SearchModule.Abstraction                              | Released version: soon<br/>Pre-released version: soon |
-| SImpl.SearchModule.ElasticSearch | SImpl.SearchModule.Abstraction<br/>SImpl.SearchModule.Core  | Released version: soon<br/>Pre-released version: soon |
+| SImpl.SearchModule.Abstraction   | SImpl Stack (Details: https://github.com/K3llr/SImpl.Stack) | Released version: ![Nuget](https://img.shields.io/nuget/v/SImpl.SearchModule.Abstraction)<br/>Pre-released version: ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/SImpl.SearchModule.Abstraction) |
+| SImpl.SearchModule.Client        | SImpl.SearchModule.Abstraction<br/>SImpl.SearchModule.Core  | Released version: ![Nuget](https://img.shields.io/nuget/v/SImpl.SearchModule.Client)<br/>Pre-released version: ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/SImpl.SearchModule.Client) |
+| SImpl.SearchModule.Core          | SImpl.SearchModule.Abstraction                              | Released version: ![Nuget](https://img.shields.io/nuget/v/SImpl.SearchModule.Core)<br/>Pre-released version: ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/SImpl.SearchModule.Core) |
+| SImpl.SearchModule.ElasticSearch | SImpl.SearchModule.Abstraction<br/>SImpl.SearchModule.Core  | Released version: ![Nuget](https://img.shields.io/nuget/v/SImpl.SearchModule.ElasticSearch)<br/>Pre-released version: ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/SImpl.SearchModule.ElasticSearch) |
 | SImpl.SearchModule.Examine       | SImpl.SearchModule.Abstraction<br/>SImpl.SearchModule.Core  | Released version: soon<br/>Pre-released version: soon |
-| SImpl.SearchModule.FluentApi     | SImpl.SearchModule.Abstraction<br/>SImpl.SearchModule.Core  | Released version: soon<br/>Pre-released version: soon |
+| SImpl.SearchModule.FluentApi     | SImpl.SearchModule.Abstraction<br/>SImpl.SearchModule.Core  | Released version: ![Nuget](https://img.shields.io/nuget/v/SImpl.SearchModule.FluentApi)<br/>Pre-released version: ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/SImpl.SearchModule.FluentApi) |
 
 # Introduction:
 
