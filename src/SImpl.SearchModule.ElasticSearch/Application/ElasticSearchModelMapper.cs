@@ -18,6 +18,8 @@ namespace SImpl.SearchModule.ElasticSearch.Application
             return new ElasticSearchModel
             {
                 Id = model.ContentKey,
+                Key = model.Key,
+                Url = model.Url,
                 AdditionalKeys = model.AdditionalKeys,
                 Culture = model.Culture.IetfLanguageTag.ToLower(),
                 Content = model.Content,
@@ -34,6 +36,8 @@ namespace SImpl.SearchModule.ElasticSearch.Application
         {
             return new BaseSearchModel
             {
+                Key = model.Key,
+                Url = model.Url,
                 ContentKey = model.Id,
                 Content = model.Content,
                 AdditionalKeys = model.AdditionalKeys,

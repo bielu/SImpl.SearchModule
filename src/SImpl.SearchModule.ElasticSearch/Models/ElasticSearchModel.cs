@@ -7,6 +7,9 @@ namespace SImpl.SearchModule.ElasticSearch.Models
     public class ElasticSearchModel : IEntity<string>
     {
         public string Id { get; set; }
+        public string Key { get; set; }
+        public string Url { get; set; }
+        
         public List<string> AdditionalKeys { get; set; }  = new List<string>();
         public DateTime? IndexedAt { get; set; }
         public string Culture { get; set; } 

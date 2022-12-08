@@ -6,6 +6,8 @@ namespace SImpl.SearchModule.Abstraction.Models
 {
     public class BaseSearchModel: ISearchModel
     {
+        public string Key { get; set; }
+        public string Url { get; set; }
         public DateTime? IndexedAt { get; set; }
         public CultureInfo Culture { get; set; }
 
