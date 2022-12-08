@@ -34,6 +34,12 @@ namespace SImpl.SearchModule.ElasticSearch.Configuration
                         new TextElasticProperty()
                         {
                             Name = "id"
+                        },   new TextElasticProperty()
+                        {
+                            Name = "key"
+                        },   new TextElasticProperty()
+                        {
+                            Name = "url"
                         },
                         new TextElasticProperty()
                         {
