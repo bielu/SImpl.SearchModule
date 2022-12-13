@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nest;
 using SImpl.CQRS.Commands;
 using SImpl.SearchModule.Abstraction.Commands;
@@ -13,11 +14,13 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
     {
         private readonly IElasticClient _client;
         private readonly ElasticSearchConfiguration _elasticSearchConfiguration;
+        private readonly ILogger<ReindexCommandHandler> _logger;
 
-        public ReindexCommandHandler(IElasticClient client, ElasticSearchConfiguration elasticSearchConfiguration)
+        public ReindexCommandHandler(IElasticClient client, ElasticSearchConfiguration elasticSearchConfiguration, ILogger<ReindexCommandHandler> logger)
         {
             _client = client;
             _elasticSearchConfiguration = elasticSearchConfiguration;
+            _logger = logger;
         }
 
         public async Task HandleAsync(ReIndexCommand command)
@@ -62,6 +65,10 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
 
             if (answerIndex.Errors)
             {
+                if (_elasticSearchConfiguration.UseDebugStream)
+                {
+                    _logger.LogError(answerIndex.DebugInformation);
+                }
                 throw new Exception(answerIndex.DebugInformation);
             }
         }

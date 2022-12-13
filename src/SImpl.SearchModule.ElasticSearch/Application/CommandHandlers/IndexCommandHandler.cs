@@ -78,7 +78,10 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
                     .Document(record)));
             if (answerIndex.Errors)
             {
-                _logger.LogError(answerIndex.DebugInformation);
+                if (_elasticSearchConfiguration.UseDebugStream)
+                {
+                    _logger.LogError(answerIndex.DebugInformation);
+                }
                 throw new Exception(answerIndex.DebugInformation);
             }
         }

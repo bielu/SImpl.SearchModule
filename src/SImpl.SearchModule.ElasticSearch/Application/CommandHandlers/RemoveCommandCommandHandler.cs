@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nest;
 using SImpl.CQRS.Commands;
 using SImpl.SearchModule.Abstraction.Commands;
@@ -15,17 +16,21 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
         private readonly IElasticClient _client;
         private readonly ElasticSearchConfiguration _elasticSearchConfiguration;
         private readonly IElasticMapper _elasticMapper;
+        private readonly ILogger<RemoveCommandCommandHandler> _logger;
 
-        public RemoveCommandCommandHandler(IElasticClient client, ElasticSearchConfiguration elasticSearchConfiguration, IElasticMapper elasticMapper)
+        public RemoveCommandCommandHandler(IElasticClient client, ElasticSearchConfiguration elasticSearchConfiguration,
+            IElasticMapper elasticMapper, ILogger<RemoveCommandCommandHandler> logger)
         {
             _client = client;
             _elasticSearchConfiguration = elasticSearchConfiguration;
             _elasticMapper = elasticMapper;
+            _logger = logger;
         }
+
         public async Task HandleAsync(RemoveCommand command)
         {
-            var indexAlias =_elasticSearchConfiguration.IndexPrefixName+ command.Index.ToLowerInvariant();
-            var indexName = ( _elasticSearchConfiguration.UseZeroDowntimeIndexing
+            var indexAlias = _elasticSearchConfiguration.IndexPrefixName + command.Index.ToLowerInvariant();
+            var indexName = (_elasticSearchConfiguration.UseZeroDowntimeIndexing
                 ? indexAlias
                 : indexAlias + DateTime.Now.ToString("-dd-MMM-HH-mm-ss"));
 
@@ -45,20 +50,25 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
 
             if (command.Models.Any())
             {
-                var answerIndex= await _client.BulkAsync(x => 
+                var answerIndex = await _client.BulkAsync(x =>
                     x.DeleteMany<ElasticSearchModel>(command.Models.Select(ElasticSearchModelMapper.Map)
                         .ToList(), (bulkDes, record) => bulkDes
                         .Index(indexAlias)
                         .Document(record)));
                 if (answerIndex.Errors)
                 {
+                    if (_elasticSearchConfiguration.UseDebugStream)
+                    {
+                        _logger.LogError(answerIndex.DebugInformation);
+                    }
+
                     throw new Exception(answerIndex.DebugInformation);
-                } 
+                }
             }
             else if (command.ModelsIds.Any())
             {
-                var answerIndex= await _client.BulkAsync(x => 
-                    x.DeleteMany<ElasticSearchModel>(command.ModelsIds.Select(x=>new ElasticSearchModel()
+                var answerIndex = await _client.BulkAsync(x =>
+                    x.DeleteMany<ElasticSearchModel>(command.ModelsIds.Select(x => new ElasticSearchModel()
                         {
                             Id = x.ToString()
                         })
@@ -67,12 +77,18 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
                         .Document(record)));
                 if (answerIndex.Errors)
                 {
+                    if (_elasticSearchConfiguration.UseDebugStream)
+                    {
+                        _logger.LogError(answerIndex.DebugInformation);
+                    }
+
                     throw new Exception(answerIndex.DebugInformation);
-                } 
-            }else if (command.ModelsKeys.Any())
+                }
+            }
+            else if (command.ModelsKeys.Any())
             {
-                var answerIndex= await _client.BulkAsync(x => 
-                    x.DeleteMany<ElasticSearchModel>(command.ModelsKeys.Select(x=>new ElasticSearchModel()
+                var answerIndex = await _client.BulkAsync(x =>
+                    x.DeleteMany<ElasticSearchModel>(command.ModelsKeys.Select(x => new ElasticSearchModel()
                         {
                             Id = x
                         })
@@ -81,10 +97,14 @@ namespace SImpl.SearchModule.ElasticSearch.Application.CommandHandlers
                         .Document(record)));
                 if (answerIndex.Errors)
                 {
+                    if (_elasticSearchConfiguration.UseDebugStream)
+                    {
+                        _logger.LogError(answerIndex.DebugInformation);
+                    }
+
                     throw new Exception(answerIndex.DebugInformation);
-                } 
+                }
             }
-          
         }
     }
 }
